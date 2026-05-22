@@ -51,7 +51,7 @@ async function oneMap(id,r,mode,t){
   L.control.zoom({position:'bottomright'}).addTo(map);
   const _isDark=document.documentElement.getAttribute('data-theme')==='dark';
   const _tileUrl=_isDark?'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png':'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
-  L.tileLayer(_tileUrl,{maxZoom:7,minZoom:3,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'}).addTo(map);
+  L.tileLayer(_tileUrl,{maxZoom:7,minZoom:4,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'}).addTo(map);
   const gj=await getGeo();
   if(!gj){el.innerHTML='<div class="empty">GeoJSON dos estados não carregou.</div>';return;}
   const layer=L.geoJSON(gj,{
