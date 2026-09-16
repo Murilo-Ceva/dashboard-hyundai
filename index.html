@@ -71,7 +71,7 @@ function businessDaysAfter(start,end){
  return count
 }
 function isoWeek(d){if(!d)return{key:'',label:'Não informado'};let x=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())),day=x.getUTCDay()||7;x.setUTCDate(x.getUTCDate()+4-day);let y=new Date(Date.UTC(x.getUTCFullYear(),0,1)),n=Math.ceil((((x-y)/86400000)+1)/7);return{key:x.getUTCFullYear()+'-S'+String(n).padStart(2,'0'),label:'Sem. '+String(n).padStart(2,'0')+'/'+x.getUTCFullYear()}}function daysBetween(a,b){return a&&b?Math.max(0,Math.floor((b-a)/86400000)):0}function farolClass(p,diasAtraso){return diasAtraso>5?'Preto':p<=80?'Verde':p<=100?'Amarelo':'Vermelho'}
-function loadText(text){let A=parseCSV(text);if(!A.length)return;let H=A.shift().map(h=>h.trim()),idx=n=>H.indexOf(n);DATA=A.map(r=>{let prev=clean(r[idx('Previsão de Entrega')]),entRaw=clean(r[idx('Data de Entrega')]),statusRaw=clean(r[idx('Status')]),status1Raw=clean(r[idx('Status_1')]),classe=st(statusRaw),ctrcRaw=clean(r[idx('Data Emissão')]),ctrcDate=dmy(ctrcRaw),inicioRaw=clean(r[idx('Data Inicio Transporte')]),inicioDate=dmy(inicioRaw),previsaoDate=dmy(prev),entregaDate=dmy(entRaw),pendente=classe==='Pendente No Prazo'||classe==='Pendente Fora',hoje=new Date();hoje.setHours(0,0,0,0);let prazoTotal=daysBetween(ctrcDate,previsaoDate),diasDecorridos=pendente?daysBetween(ctrcDate,hoje):0,farolPct=pendente&&prazoTotal>0?diasDecorridos/prazoTotal*100:null,diasAtrasoFarol=pendente&&previsaoDate?businessDaysAfter(previsaoDate,hoje):0,farol=farolPct===null?'Sem dados':farolClass(farolPct,diasAtrasoFarol),refData=pendente?previsaoDate:entregaDate,m=refData?refData.getMonth()+1:0,a=refData?refData.getFullYear():0,w=isoWeek(previsaoDate),inicioMes=inicioDate?inicioDate.getMonth()+1:0,inicioAno=inicioDate?inicioDate.getFullYear():0;return{nf:clean(r[idx('NF')]),cliente:clean(r[idx('Destinatário')]),cidade:clean(r[idx('Cidade Destino')]),uf:clean(r[idx('UF Destino')]),tsp:clean(r[idx('Agente Transporte')]),regiao:clean(r[idx('Região')]),status:statusRaw,status1:status1Raw,statusOtd:classe,vol:num(r[idx('Qtde. Volumes')]),previsao:prev,entrega:entRaw==='Não informado'?'—':entRaw,ctrcEmissao:ctrcRaw==='Não informado'?'—':ctrcRaw,inicioTransporte:inicioRaw==='Não informado'?'—':inicioRaw,inicioMes,inicioAno,diasDecorridos,diasAtrasoFarol,prazoTotal,farolPct,farol,semanaPrev:w.key,semanaLabel:w.label,diasAtraso:age(prev,entRaw,statusRaw),mes:m,ano:a,mesNome:m?meses[m]:'Não informado'}}).filter(x=>x.nf!=='Não informado');$('#empty').classList.add('hide');$('#dash').classList.remove('hide');fillFilters(true);fillFarolWeeks();pg=1;render()}
+function loadText(text){let A=parseCSV(text);if(!A.length)return;let H=A.shift().map(h=>h.trim()),idx=n=>H.indexOf(n);DATA=A.map(r=>{let prev=clean(r[idx('Previsão de Entrega')]),entRaw=clean(r[idx('Data de Entrega')]),statusRaw=clean(r[idx('Status')]),status1Raw=clean(r[idx('Status_1')]),classe=st(statusRaw),ctrcRaw=clean(r[idx('Data Emissão')]),ctrcDate=dmy(ctrcRaw),inicioRaw=clean(r[idx('Data Inicio Transporte')]),inicioDate=dmy(inicioRaw),previsaoDate=dmy(prev),entregaDate=dmy(entRaw),pendente=classe==='Pendente No Prazo'||classe==='Pendente Fora',hoje=new Date();hoje.setHours(0,0,0,0);let prazoTotal=daysBetween(ctrcDate,previsaoDate),diasDecorridos=pendente?daysBetween(ctrcDate,hoje):0,farolPct=pendente&&prazoTotal>0?diasDecorridos/prazoTotal*100:null,diasAtrasoFarol=pendente&&previsaoDate?businessDaysAfter(previsaoDate,hoje):0,farol=farolPct===null?'Sem dados':farolClass(farolPct,diasAtrasoFarol),refData=pendente?previsaoDate:entregaDate,m=refData?refData.getMonth()+1:0,a=refData?refData.getFullYear():0,w=isoWeek(previsaoDate),inicioMes=inicioDate?inicioDate.getMonth()+1:0,inicioAno=inicioDate?inicioDate.getFullYear():0;return{nf:clean(r[idx('NF')]),cliente:clean(r[idx('Destinatário')]),cidade:clean(r[idx('Cidade Destino')]),uf:clean(r[idx('UF Destino')]),tsp:clean(r[idx('Agente Transporte')]),regiao:clean(r[idx('Região')]),ocorrencia:clean(r[idx('Ocorrência Entrega')]),status:statusRaw,status1:status1Raw,statusOtd:classe,vol:num(r[idx('Qtde. Volumes')]),previsao:prev,entrega:entRaw==='Não informado'?'—':entRaw,ctrcEmissao:ctrcRaw==='Não informado'?'—':ctrcRaw,inicioTransporte:inicioRaw==='Não informado'?'—':inicioRaw,inicioMes,inicioAno,diasDecorridos,diasAtrasoFarol,prazoTotal,farolPct,farol,semanaPrev:w.key,semanaLabel:w.label,diasAtraso:age(prev,entRaw,statusRaw),mes:m,ano:a,mesNome:m?meses[m]:'Não informado'}}).filter(x=>x.nf!=='Não informado');$('#empty').classList.add('hide');$('#dash').classList.remove('hide');fillFilters(true);fillFarolWeeks();pg=1;render()}
 function uni(a){return[...new Set(a.filter(x=>x&&x!=='Não informado'))].sort((a,b)=>String(a).localeCompare(String(b),'pt-BR'))}function fillFilters(first=false){let keep={};$$('#filters select').forEach(s=>keep[s.id]=s.value);let set=(id,l,v,d=null)=>{let e=$(id);e.innerHTML=`<option value="">${l}</option>`+v.map(x=>`<option value="${esc(x)}">${d?d[x]:esc(x)}</option>`).join('');if(keep[id]&&[...e.options].some(o=>o.value===keep[id]))e.value=keep[id]};set('#fm','Todos Meses',[...new Set(DATA.map(r=>r.mes).filter(Boolean))].sort((a,b)=>a-b),meses);set('#fa','Todos Anos',[...new Set(DATA.map(r=>r.ano).filter(Boolean))].sort((a,b)=>a-b));set('#fr','Todas Regiões',uni(DATA.map(r=>r.regiao)));set('#ft','Todas TSP',uni(DATA.map(r=>r.tsp)));set('#fu','Todos UFs',uni(DATA.map(r=>r.uf)));set('#fc','Todas Cidades',uni(DATA.map(r=>r.cidade)));set('#fs','Todos Status',['No prazo','Fora prazo','Pendente No Prazo','Pendente Fora']);if(first){let now=new Date(),cy=now.getFullYear(),cm=now.getMonth()+1;if(DATA.some(r=>r.ano===cy&&r.mes===cm)){let fa=$('#fa'),fm=$('#fm');if(fa)fa.value=String(cy);if(fm)fm.value=String(cm)}}}
 function rows(){let q=$('#q').value.toLowerCase().trim(),act=$$('#filters select').filter(s=>s.value);return DATA.filter(r=>act.every(s=>{let f=s.dataset.field;if(page==='otdinicio'&&f==='mes')return String(r.inicioMes)===String(s.value);if(page==='otdinicio'&&f==='ano')return String(r.inicioAno)===String(s.value);return String(r[f]??'')===String(s.value)})&&(!q||[r.nf,r.cliente,r.cidade,r.uf,r.tsp].join(' ').toLowerCase().includes(q)))}function metric(r,mode){let b=r.filter(isOtdEligible),ok=0,fp=0;if(mode==='vol'){ok=b.filter(isOtdOk).reduce((a,x)=>a+x.vol,0);fp=b.filter(isOtdLate).reduce((a,x)=>a+x.vol,0)}else{ok=b.filter(isOtdOk).length;fp=b.filter(isOtdLate).length}let t=ok+fp;return{ok,fp,t,p:t?ok/t*100:0}}function count(r,k,mode='nf'){let m={};r.forEach(x=>m[x[k]]=(m[x[k]]||0)+(mode==='vol'?x.vol:1));return Object.entries(m).map(([k,v])=>({k,v})).sort((a,b)=>b.v-a.v)}
 function drill(t,fn){let id='d'+Object.keys(DRILL).length;DRILL[id]={t,fn};return id}function row(x){return`<tr><td>${esc(x.nf)}</td><td title="${esc(x.cliente)}">${esc(x.cliente)}</td><td>${esc(x.cidade)}</td><td>${esc(x.uf)}</td><td>${esc(x.tsp)}</td><td><span class="pill ${x.statusOtd==='No prazo'?'ok':x.statusOtd==='Fora prazo'?'late':isPending(x)?'pend':'info'}">${esc(x.statusOtd)}</span><div style="font-size:9px;color:var(--muted);margin-top:3px;white-space:normal">${esc(x.status1==='Não informado'?'Sem atualização operacional':x.status1)}</div></td><td>${br(x.vol)}</td><td>${br(x.diasAtraso)}</td><td>${esc(x.previsao)}</td><td>${esc(x.entrega)}</td></tr>`}function openDrill(id){let d=DRILL[id];if(!d)return;let rr=d.fn();$('#modalTitle').textContent=d.t;$('#modalSub').textContent=br(rr.length)+' registros • '+br(rr.reduce((a,x)=>a+x.vol,0))+' volumes';$('#modalTb').innerHTML=rr.map(row).join('')||'<tr><td colspan="10" class="empty">Sem registros</td></tr>';$('#modal').classList.remove('hide')}
@@ -184,9 +184,9 @@ function renderMaps(r){
 let FAROL_COLOR='';function fillFarolWeeks(){let e=$('#farolWeek');if(!e)return;let keep=e.value,v=[...new Map(DATA.filter(x=>x.semanaPrev).map(x=>[x.semanaPrev,x.semanaLabel])).entries()].sort((a,b)=>a[0].localeCompare(b[0]));e.innerHTML='<option value="">Todas as semanas previstas</option>'+v.map(([x,l])=>`<option value="${esc(x)}">${esc(l)}</option>`).join('');if(v.some(x=>x[0]===keep))e.value=keep}
 function farolAgingRender(r){let w=$('#farolWeek')?.value||'',base=r.filter(x=>x.farolPct!==null&&(!w||x.semanaPrev===w)),g=base.filter(x=>x.farol==='Verde'),y=base.filter(x=>x.farol==='Amarelo'),rd=base.filter(x=>x.farol==='Vermelho'),bk=base.filter(x=>x.farol==='Preto');cards('#cardsFarolAging',[{k:'Pendências avaliadas',v:br(base.length)},{k:'No Prazo',v:br(g.length),cls:'green',n:base.length?pct(g.length/base.length*100):'0,0%'},{k:'A Vencer',v:br(y.length),cls:'orange',n:base.length?pct(y.length/base.length*100):'0,0%'},{k:'Atrasado',v:br(rd.length),cls:'red',n:base.length?pct(rd.length/base.length*100):'0,0%'},{k:'Busca e Resgate',v:br(bk.length),cls:'black',n:base.length?pct(bk.length/base.length*100):'0,0%'}]);let cc=$$('#cardsFarolAging .card');[['Verde',1],['Amarelo',2],['Vermelho',3],['Preto',4]].forEach(([cor,i])=>{if(cc[i]){cc[i].classList.toggle('farolSelected',FAROL_COLOR===cor);cc[i].title=FAROL_COLOR===cor?'Clique para remover o filtro':'Clique para filtrar '+({'Verde':'No Prazo','Amarelo':'A Vencer','Vermelho':'Atrasado','Preto':'Busca e Resgate'}[cor]||cor);cc[i].onclick=()=>{FAROL_COLOR=FAROL_COLOR===cor?'':cor;farolAgingRender(rows())}}});let f=FAROL_COLOR?base.filter(x=>x.farol===FAROL_COLOR):base,t=Math.max(1,f.length),fg=f.filter(x=>x.farol==='Verde'),fy=f.filter(x=>x.farol==='Amarelo'),fr=f.filter(x=>x.farol==='Vermelho'),fb=f.filter(x=>x.farol==='Preto'),pg=fg.length/t*100,py=fy.length/t*100,pr=fr.length/t*100,pb=fb.length/t*100;$('#farolGaugeAging').innerHTML=`<div class="farolDonut" style="background:conic-gradient(#4bd267 0 ${pg}%,#fff200 ${pg}% ${pg+py}%,#f20b0b ${pg+py}% ${pg+py+pr}%,#111827 ${pg+py+pr}% 100%)"><div class="farolDonutCenter"><b>${br(f.length)}</b><span>${FAROL_COLOR?({'Verde':'NO PRAZO','Amarelo':'A VENCER','Vermelho':'ATRASADO','Preto':'BUSCA E RESGATE'}[FAROL_COLOR]||FAROL_COLOR.toUpperCase()):'PENDENTES'}</span></div></div><div class="farolStats"><div class="farolStat"><i class="farolDot" style="background:#4bd267"></i><span>No Prazo</span><b>${br(fg.length)} (${pct(pg)})</b></div><div class="farolStat"><i class="farolDot" style="background:#fff200"></i><span>A Vencer</span><b>${br(fy.length)} (${pct(py)})</b></div><div class="farolStat"><i class="farolDot" style="background:#f20b0b"></i><span>Atrasado</span><b>${br(fr.length)} (${pct(pr)})</b></div><div class="farolStat"><i class="farolDot" style="background:#111827"></i><span>Busca e Resgate</span><b>${br(fb.length)} (${pct(pb)})</b></div></div>`;let wk={};f.forEach(x=>wk[x.semanaLabel]=(wk[x.semanaLabel]||0)+1);bars('#farolWeekBarsAging',Object.entries(wk).map(([k,v])=>({k,v})).sort((a,b)=>a.k.localeCompare(b.k)).slice(-15),'purple',FAROL_COLOR?'Pendências '+({'Verde':'No Prazo','Amarelo':'A Vencer','Vermelho':'Atrasado','Preto':'Busca e Resgate'}[FAROL_COLOR]||FAROL_COLOR)+' por semana':'Pendências por semana prevista',x=>rows().filter(z=>z.semanaLabel===x.k&&z.farolPct!==null&&(!FAROL_COLOR||z.farol===FAROL_COLOR)));$('#farolTbAging').innerHTML=f.slice().sort((a,b)=>b.diasAtrasoFarol-a.diasAtrasoFarol||b.farolPct-a.farolPct).map(x=>{let c=x.farol==='Verde'?'farolGreen':x.farol==='Amarelo'?'farolYellow':x.farol==='Vermelho'?'farolRed':'farolBlack';return`<tr><td>${esc(x.nf)}</td><td>${esc(x.cliente)}</td><td>${esc(x.tsp)}</td><td>${esc(x.ctrcEmissao)}</td><td>${esc(x.previsao)}</td><td>${br(x.diasDecorridos)} dias</td><td><b>${br(x.diasAtrasoFarol)} dias</b></td><td><b>${pct(x.farolPct)}</b></td><td><span class="farolBadge ${c}">${({'Verde':'No Prazo','Amarelo':'A Vencer','Vermelho':'Atrasado','Preto':'Busca e Resgate'}[x.farol]||x.farol)}</span></td><td>${esc(x.semanaLabel)}</td></tr>`}).join('')||'<tr><td colspan="10" class="empty">Sem pendências para o filtro selecionado.</td></tr>'}
 function statusOtdTable(r){let ts=uni(r.map(x=>x.tsp)).map(t=>{let a=r.filter(x=>x.tsp===t),np=a.filter(isOtdOk),fp=a.filter(isOtdLate),pd=a.filter(isPending),ev=np.concat(fp),npv=np.reduce((s,x)=>s+x.vol,0),fpv=fp.reduce((s,x)=>s+x.vol,0),pv=pd.reduce((s,x)=>s+x.vol,0),tv=a.reduce((s,x)=>s+x.vol,0);return{t,total:a.length,np:np.length,fp:fp.length,pd:pd.length,tv,pv,onf:ev.length?np.length/ev.length*100:0,ovol:npv+fpv?npv/(npv+fpv)*100:0}}).sort((a,b)=>b.total-a.total),z=ts.reduce((a,x)=>({total:a.total+x.total,np:a.np+x.np,fp:a.fp+x.fp,pd:a.pd+x.pd,tv:a.tv+x.tv,pv:a.pv+x.pv}),{total:0,np:0,fp:0,pd:0,tv:0,pv:0}),onf=z.np+z.fp?z.np/(z.np+z.fp)*100:0,ovol=(()=>{let npv=r.filter(isOtdOk).reduce((a,x)=>a+x.vol,0),fpv=r.filter(isOtdLate).reduce((a,x)=>a+x.vol,0);return npv+fpv?npv/(npv+fpv)*100:0})();$('#statusOtdMatrix').innerHTML=`<table class="statusMatrix"><thead><tr><th>Transportadora</th><th>Total NF</th><th>NP</th><th>FP</th><th>NF Pendente</th><th>Qtde Volume</th><th>Vol. Pendente</th><th>OTD NF %</th><th>OTD Volume %</th></tr></thead><tbody>${ts.map(x=>`<tr><td>${esc(x.t)}</td><td>${br(x.total)}</td><td>${br(x.np)}</td><td>${br(x.fp)}</td><td>${br(x.pd)}</td><td>${br(x.tv)}</td><td>${br(x.pv)}</td><td>${pct(x.onf)}</td><td>${pct(x.ovol)}</td></tr>`).join('')}</tbody><tfoot><tr><td>Total</td><td>${br(z.total)}</td><td>${br(z.np)}</td><td>${br(z.fp)}</td><td>${br(z.pd)}</td><td>${br(z.tv)}</td><td>${br(z.pv)}</td><td>${pct(onf)}</td><td>${pct(ovol)}</td></tr></tfoot></table>`}
-function renderOtdInicio(r){let i=r.filter(x=>x.inicioAno&&x.inicioMes),e=i.filter(isOtdEligible),m=metric(e,'nf'),p=i.filter(isPending),late=i.filter(isOtdLate);cards('#cardsOtdInicio',[{k:'Total de NFs',v:br(i.length)},{k:'NFs Entregues',v:br(m.t)},{k:'Entregues no prazo',v:br(m.ok),cls:'green'},{k:'Entregues fora do prazo',v:br(m.fp),cls:'red'},{k:'Total de Volumes',v:br(i.reduce((a,x)=>a+x.vol,0)),cls:'purple'},{k:'Pendentes',v:br(p.length),cls:'orange'}]);gauge('#gOtdInicio',m,'',()=>e);rank('#rankOtdUf',e,'uf','nf','OTD por UF');rank('#rankOtdInicio',e,'tsp','nf','OTD por TSP');bars('#lateCityOtd',count(late,'cidade','nf').slice(0,15),'red','Atrasos por Cidade',x=>i.filter(z=>z.statusOtd==='Fora prazo'&&z.cidade===x.k));statusOtdTable(i)}
+function renderOtdInicio(r){let i=r.filter(x=>x.inicioAno&&x.inicioMes),e=i.filter(isOtdEligible),m=metric(e,'nf'),p=i.filter(isPending),late=i.filter(isOtdLate);cards('#cardsOtdInicio',[{k:'Total de NFs',v:br(i.length)},{k:'NFs Entregues',v:br(m.t)},{k:'Entregues no prazo',v:br(m.ok),cls:'green'},{k:'Entregues fora do prazo',v:br(m.fp),cls:'red'},{k:'Total de Volumes',v:br(i.reduce((a,x)=>a+x.vol,0)),cls:'purple'},{k:'Pendentes',v:br(p.length),cls:'orange'}]);gauge('#gOtdInicio',m,'',()=>e);rank('#rankOtdUf',e,'uf','nf','OTD por UF');rank('#rankOtdInicio',e,'tsp','nf','OTD por TSP');bars('#lateCityOtd',count(late,'cidade','nf').slice(0,15),'red','Atrasos por Cidade',x=>i.filter(z=>isOtdLate(z)&&z.cidade===x.k));statusOtdTable(i)}
 function renderTable(r){let pages=Math.max(1,Math.ceil(r.length/ps));if(pg>pages)pg=pages;let sl=r.slice((pg-1)*ps,pg*ps);$('#tb').innerHTML=sl.map(row).join('')||'<tr><td colspan="10" class="empty">Sem registros</td></tr>';$('#countBadge').textContent=br(r.length)+' registros';$('#pg').textContent=`Página ${pg} de ${pages}`}
-const titles={geral:'Visão Geral',nf:'Por NF',volume:'Por Volume',aging:'Aging - Entregas',tsp:'Transportadora',uf:'Por UF',cidade:'Por Cidade',mapa:'Mapa Brasil',otdinicio:'OTD - Início de Transporte'};function render(){DRILL={};let r=rows(),mn=metric(r,'nf'),mv=metric(r,'vol'),p=r.filter(x=>isPending(x)),pDentro=p.filter(x=>x.statusOtd==='Pendente No Prazo'),pFora=p.filter(x=>x.statusOtd==='Pendente Fora'),l=r.filter(x=>x.statusOtd==='Fora prazo');$('#ttl').textContent=titles[page];$('#sub').textContent=`${br(r.length)} registros filtrados • NF e Volume separados`;$$('.page').forEach(x=>x.classList.toggle('hide',x.id!==page));if(page==='geral'){cards('#cardsG',[{k:'NFs Entregues',v:br(mn.ok+mn.fp)},{k:'NF no prazo',v:br(mn.ok),cls:'green'},{k:'NF fora prazo',v:br(mn.fp),cls:'red'},{k:'Volumes Entregues',v:br(mv.ok+mv.fp),cls:'purple'},{k:'Volumes no prazo',v:br(mv.ok),cls:'green'},{k:'Volumes fora prazo',v:br(mv.fp),cls:'red'},{k:'Pendentes NF',v:br(p.length)+' NF',cls:'orange',n:'Dentro: '+br(pDentro.length)+' | Fora: '+br(pFora.length)}]);gauge('#gCe',mn,'CEVA NF',()=>rows().filter(x=>x.statusOtd==='No prazo'||x.statusOtd==='Fora prazo'));gauge('#gHy',mv,'HYUNDAI VOLUME',()=>rows().filter(x=>x.statusOtd==='No prazo'||x.statusOtd==='Fora prazo'));rank('#rankCeT',r,'tsp','nf','OTD NF por TSP');rank('#rankHyT',r,'tsp','vol','OTD Volume por TSP')}if(page==='nf'){cards('#cardsNf',[{k:'NFs Entregues',v:br(mn.ok+mn.fp)},{k:'No prazo',v:br(mn.ok),cls:'green'},{k:'Fora prazo',v:br(mn.fp),cls:'red'},{k:'Pendentes',v:br(p.length),cls:'orange'}]);gauge('#gNf',mn,'CEVA NF',()=>rows());bars('#barNf',count(r,'tsp','nf').slice(0,10),'','NF por TSP',x=>rows().filter(z=>z.tsp===x.k));tableMetric('#tblNf',r,'nf')}if(page==='volume'){cards('#cardsVol',[{k:'Volumes Entregues',v:br(mv.ok+mv.fp)},{k:'Vol. no prazo',v:br(mv.ok),cls:'green'},{k:'Vol. fora prazo',v:br(mv.fp),cls:'red'},{k:'Vol. pendentes',v:br(p.reduce((a,x)=>a+x.vol,0)),cls:'orange'}]);gauge('#gVol',mv,'HYUNDAI VOLUME',()=>rows());bars('#barVolMes',count(r,'mesNome','vol').slice(0,12),'purple','Volumes por mês',x=>rows().filter(z=>z.mesNome===x.k));tableMetric('#tblVol',r,'vol')}if(page==='aging'){farolAgingRender(r);let c=p.filter(x=>x.diasAtraso>=10);cards('#cardsAging',[{k:'Pendentes NF',v:br(p.length),cls:'orange'},{k:'Dentro do prazo',v:br(pDentro.length),cls:'green',n:'Pendentes sem atraso'},{k:'Fora do prazo',v:br(pFora.length),cls:'red',n:'Pendentes com atraso'},{k:'Pendentes Vol.',v:br(p.reduce((a,x)=>a+x.vol,0)),cls:'purple'},{k:'Vol. Pendente No Prazo',v:br(pDentro.reduce((a,x)=>a+x.vol,0)),cls:'green'},{k:'Vol. Pendente Fora',v:br(pFora.reduce((a,x)=>a+x.vol,0)),cls:'red'},{k:'Aging médio',v:p.length?pct(p.reduce((a,x)=>a+x.diasAtraso,0)/p.length).replace('%',' dias'):'0 dias'}]);bars('#agingBarsNf',agingBuckets(r,'nf'),'orange','Aging NF',x=>rows().filter(z=>isPending(z)&&bucket(z.diasAtraso)===x.k));bars('#agingBarsVol',agingBuckets(r,'vol'),'purple','Aging Volume',x=>rows().filter(z=>isPending(z)&&bucket(z.diasAtraso)===x.k));$('#alerts').innerHTML=alerts(r);countRank('#pendTsp',p,'tsp','nf','Pendentes por TSP');countRank('#pendUf',p,'uf','nf','Pendentes por UF');renderAgingMatrix(r)}if(page==='tsp'){cards('#cardsTsp',[{k:'OTD NF',v:pct(mn.p)},{k:'OTD Volume',v:pct(mv.p)},{k:'Atrasos NF',v:br(l.length),cls:'red'},{k:'Atrasos Volume',v:br(l.reduce((a,x)=>a+x.vol,0)),cls:'red'},{k:'Pendentes',v:br(p.length)+' NF',cls:'orange',n:br(p.reduce((a,x)=>a+x.vol,0))+' volumes'}]);rank('#tspNf',r,'tsp','nf','OTD TSP NF');rank('#tspVol',r,'tsp','vol','OTD TSP Volume');bars('#tspLateNf',count(l,'tsp','nf').slice(0,15),'red','Atrasos NF por TSP',x=>rows().filter(z=>z.statusOtd==='Fora prazo'&&z.tsp===x.k));bars('#tspLateVol',count(l,'tsp','vol').slice(0,15),'orange','Atrasos Vol por TSP',x=>rows().filter(z=>z.statusOtd==='Fora prazo'&&z.tsp===x.k))}if(page==='uf'){cards('#cardsUf',[{k:'OTD NF',v:pct(mn.p)},{k:'OTD Volume',v:pct(mv.p)},{k:'Atrasos NF',v:br(l.length),cls:'red'},{k:'Atrasos Volume',v:br(l.reduce((a,x)=>a+x.vol,0)),cls:'red'},{k:'Pendentes',v:br(p.length)+' NF',cls:'orange',n:br(p.reduce((a,x)=>a+x.vol,0))+' volumes'}]);rank('#ufNf',r,'uf','nf','OTD UF NF');rank('#ufVol',r,'uf','vol','OTD UF Volume');bars('#ufLateNf',count(l,'uf','nf').slice(0,27),'red','Atrasos NF por UF',x=>rows().filter(z=>z.statusOtd==='Fora prazo'&&z.uf===x.k));bars('#ufLateVol',count(l,'uf','vol').slice(0,27),'orange','Atrasos Vol por UF',x=>rows().filter(z=>z.statusOtd==='Fora prazo'&&z.uf===x.k))}if(page==='cidade'){cards('#cardsCid',[{k:'Cidades',v:br(uni(r.map(x=>x.cidade)).length)},{k:'Atrasos NF',v:br(l.length),cls:'red'},{k:'Atrasos Vol.',v:br(l.reduce((a,x)=>a+x.vol,0)),cls:'red'},{k:'Pendentes NF',v:br(p.length),cls:'orange'},{k:'Pendentes Vol.',v:br(p.reduce((a,x)=>a+x.vol,0)),cls:'purple'}]);bars('#cidLateNf',count(l,'cidade','nf').slice(0,10),'red','Atrasos NF por Cidade',x=>rows().filter(z=>z.statusOtd==='Fora prazo'&&z.cidade===x.k));bars('#cidLateVol',count(l,'cidade','vol').slice(0,10),'orange','Atrasos Vol por Cidade',x=>rows().filter(z=>z.statusOtd==='Fora prazo'&&z.cidade===x.k));rank('#cidOtdNf',r,'cidade','nf','OTD NF por Cidade');rank('#cidOtdVol',r,'cidade','vol','OTD Volume por Cidade')}if(page==='otdinicio')renderOtdInicio(r);if(page==='mapa')renderMaps(r);renderTable(page==='aging'?r.filter(x=>isPending(x)):r)}
+const titles={geral:'Visão Geral',nf:'Por NF',volume:'Por Volume',aging:'Aging - Entregas',tsp:'Transportadora',uf:'Por UF',cidade:'Por Cidade',mapa:'Mapa Brasil',otdinicio:'OTD - Início de Transporte'};function render(){DRILL={};let r=rows(),mn=metric(r,'nf'),mv=metric(r,'vol'),p=r.filter(x=>isPending(x)),pDentro=p.filter(x=>x.statusOtd==='Pendente No Prazo'),pFora=p.filter(x=>x.statusOtd==='Pendente Fora'),l=r.filter(x=>isOtdLate(x));$('#ttl').textContent=titles[page];$('#sub').textContent=`${br(r.length)} registros filtrados • NF e Volume separados`;$$('.page').forEach(x=>x.classList.toggle('hide',x.id!==page));if(page==='geral'){cards('#cardsG',[{k:'NFs Entregues',v:br(mn.ok+mn.fp)},{k:'NF no prazo',v:br(mn.ok),cls:'green'},{k:'NF fora prazo',v:br(mn.fp),cls:'red'},{k:'Volumes Entregues',v:br(mv.ok+mv.fp),cls:'purple'},{k:'Volumes no prazo',v:br(mv.ok),cls:'green'},{k:'Volumes fora prazo',v:br(mv.fp),cls:'red'},{k:'Pendentes NF',v:br(p.length)+' NF',cls:'orange',n:'Dentro: '+br(pDentro.length)+' | Fora: '+br(pFora.length)}]);gauge('#gCe',mn,'CEVA NF',()=>rows().filter(x=>x.statusOtd==='No prazo'||x.statusOtd==='Fora prazo'));gauge('#gHy',mv,'HYUNDAI VOLUME',()=>rows().filter(x=>x.statusOtd==='No prazo'||x.statusOtd==='Fora prazo'));rank('#rankCeT',r,'tsp','nf','OTD NF por TSP');rank('#rankHyT',r,'tsp','vol','OTD Volume por TSP')}if(page==='nf'){cards('#cardsNf',[{k:'NFs Entregues',v:br(mn.ok+mn.fp)},{k:'No prazo',v:br(mn.ok),cls:'green'},{k:'Fora prazo',v:br(mn.fp),cls:'red'},{k:'Pendentes',v:br(p.length),cls:'orange'}]);gauge('#gNf',mn,'CEVA NF',()=>rows());bars('#barNf',count(r,'tsp','nf').slice(0,10),'','NF por TSP',x=>rows().filter(z=>z.tsp===x.k));tableMetric('#tblNf',r,'nf')}if(page==='volume'){cards('#cardsVol',[{k:'Volumes Entregues',v:br(mv.ok+mv.fp)},{k:'Vol. no prazo',v:br(mv.ok),cls:'green'},{k:'Vol. fora prazo',v:br(mv.fp),cls:'red'},{k:'Vol. pendentes',v:br(p.reduce((a,x)=>a+x.vol,0)),cls:'orange'}]);gauge('#gVol',mv,'HYUNDAI VOLUME',()=>rows());bars('#barVolMes',count(r,'mesNome','vol').slice(0,12),'purple','Volumes por mês',x=>rows().filter(z=>z.mesNome===x.k));tableMetric('#tblVol',r,'vol')}if(page==='aging'){farolAgingRender(r);let c=p.filter(x=>x.diasAtraso>=10);cards('#cardsAging',[{k:'Pendentes NF',v:br(p.length),cls:'orange'},{k:'Dentro do prazo',v:br(pDentro.length),cls:'green',n:'Pendentes sem atraso'},{k:'Fora do prazo',v:br(pFora.length),cls:'red',n:'Pendentes com atraso'},{k:'Pendentes Vol.',v:br(p.reduce((a,x)=>a+x.vol,0)),cls:'purple'},{k:'Vol. Pendente No Prazo',v:br(pDentro.reduce((a,x)=>a+x.vol,0)),cls:'green'},{k:'Vol. Pendente Fora',v:br(pFora.reduce((a,x)=>a+x.vol,0)),cls:'red'},{k:'Aging médio',v:p.length?pct(p.reduce((a,x)=>a+x.diasAtraso,0)/p.length).replace('%',' dias'):'0 dias'}]);bars('#agingBarsNf',agingBuckets(r,'nf'),'orange','Aging NF',x=>rows().filter(z=>isPending(z)&&bucket(z.diasAtraso)===x.k));bars('#agingBarsVol',agingBuckets(r,'vol'),'purple','Aging Volume',x=>rows().filter(z=>isPending(z)&&bucket(z.diasAtraso)===x.k));$('#alerts').innerHTML=alerts(r);countRank('#pendTsp',p,'tsp','nf','Pendentes por TSP');countRank('#pendUf',p,'uf','nf','Pendentes por UF');renderAgingMatrix(r)}if(page==='tsp'){cards('#cardsTsp',[{k:'OTD NF',v:pct(mn.p)},{k:'OTD Volume',v:pct(mv.p)},{k:'Atrasos NF',v:br(l.length),cls:'red'},{k:'Atrasos Volume',v:br(l.reduce((a,x)=>a+x.vol,0)),cls:'red'},{k:'Pendentes',v:br(p.length)+' NF',cls:'orange',n:br(p.reduce((a,x)=>a+x.vol,0))+' volumes'}]);rank('#tspNf',r,'tsp','nf','OTD TSP NF');rank('#tspVol',r,'tsp','vol','OTD TSP Volume');bars('#tspLateNf',count(l,'tsp','nf').slice(0,15),'red','Atrasos NF por TSP',x=>rows().filter(z=>z.statusOtd==='Fora prazo'&&z.tsp===x.k));bars('#tspLateVol',count(l,'tsp','vol').slice(0,15),'orange','Atrasos Vol por TSP',x=>rows().filter(z=>z.statusOtd==='Fora prazo'&&z.tsp===x.k))}if(page==='uf'){cards('#cardsUf',[{k:'OTD NF',v:pct(mn.p)},{k:'OTD Volume',v:pct(mv.p)},{k:'Atrasos NF',v:br(l.length),cls:'red'},{k:'Atrasos Volume',v:br(l.reduce((a,x)=>a+x.vol,0)),cls:'red'},{k:'Pendentes',v:br(p.length)+' NF',cls:'orange',n:br(p.reduce((a,x)=>a+x.vol,0))+' volumes'}]);rank('#ufNf',r,'uf','nf','OTD UF NF');rank('#ufVol',r,'uf','vol','OTD UF Volume');bars('#ufLateNf',count(l,'uf','nf').slice(0,27),'red','Atrasos NF por UF',x=>rows().filter(z=>isOtdLate(z)&&z.uf===x.k));bars('#ufLateVol',count(l,'uf','vol').slice(0,27),'orange','Atrasos Vol por UF',x=>rows().filter(z=>isOtdLate(z)&&z.uf===x.k))}if(page==='cidade'){cards('#cardsCid',[{k:'Cidades',v:br(uni(r.map(x=>x.cidade)).length)},{k:'Atrasos NF',v:br(l.length),cls:'red'},{k:'Atrasos Vol.',v:br(l.reduce((a,x)=>a+x.vol,0)),cls:'red'},{k:'Pendentes NF',v:br(p.length),cls:'orange'},{k:'Pendentes Vol.',v:br(p.reduce((a,x)=>a+x.vol,0)),cls:'purple'}]);bars('#cidLateNf',count(l,'cidade','nf').slice(0,10),'red','Atrasos NF por Cidade',x=>rows().filter(z=>isOtdLate(z)&&z.cidade===x.k));bars('#cidLateVol',count(l,'cidade','vol').slice(0,10),'orange','Atrasos Vol por Cidade',x=>rows().filter(z=>isOtdLate(z)&&z.cidade===x.k));rank('#cidOtdNf',r,'cidade','nf','OTD NF por Cidade');rank('#cidOtdVol',r,'cidade','vol','OTD Volume por Cidade')}if(page==='otdinicio')renderOtdInicio(r);if(page==='mapa')renderMaps(r);renderTable(page==='aging'?r.filter(x=>isPending(x)):r)}
 $('#importBtn').onclick=()=>$('#file').click();$('#file').onchange=e=>{let f=e.target.files[0];if(!f)return;let rd=new FileReader();rd.onload=()=>loadText(rd.result);rd.readAsText(f,'ISO-8859-1')};$('#collapse').onclick=()=>$('#app').classList.toggle('collapsed');$('#theme').onclick=()=>{let d=document.documentElement.getAttribute('data-theme')==='dark';document.documentElement.setAttribute('data-theme',d?'light':'dark');$('#theme').textContent=d?'🌙':'☀️';localStorage.setItem('theme',d?'light':'dark')};if(localStorage.getItem('theme')==='dark'){document.documentElement.setAttribute('data-theme','dark');$('#theme').textContent='☀️'}$$('.nav button').forEach(b=>b.onclick=()=>{let nextPage=b.dataset.page,leavingAging=page==='aging'&&nextPage!=='aging';page=nextPage;if(page==='aging'){let fm=$('#fm');if(fm)fm.value=''}else if(leavingAging){let now=new Date(),cm=String(now.getMonth()+1),fm=$('#fm');if(fm&&[...fm.options].some(o=>o.value===cm))fm.value=cm}pg=1;$$('.nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');render();if(page==='mapa')setTimeout(()=>Object.values(MAPS).forEach(m=>{try{m.invalidateSize(true)}catch(e){}}),350)});$$('#filters select').forEach(s=>s.onchange=()=>{pg=1;render()});$('#q').oninput=()=>{pg=1;render()};$('#farolWeek').onchange=()=>{if(page==='aging')farolAgingRender(rows())};$('#prev').onclick=()=>{pg=Math.max(1,pg-1);renderTable(page==='aging'?rows().filter(x=>isPending(x)):rows())};$('#next').onclick=()=>{pg++;renderTable(page==='aging'?rows().filter(x=>isPending(x)):rows())};$('#modalClose').onclick=()=>$('#modal').classList.add('hide');$('#modal').onclick=e=>{if(e.target.id==='modal')$('#modal').classList.add('hide')};
 </script>
 
@@ -245,4 +245,684 @@ $('#importBtn').onclick=()=>$('#file').click();$('#file').onchange=e=>{let f=e.t
 <style id="patch-cards-murilo-v12">
 .cards{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))!important;align-items:stretch!important}.card{min-height:66px!important}.card.orange{border-top-color:var(--orange)!important}.card .n{white-space:normal!important;line-height:13px!important}
 </style>
+
+
+
+
+
+
+<!-- HYUNDAI FINAL CONSOLIDADO V2 -->
+<style id="hy-final-v2-css">
+.nav button[data-page="volume"],.nav button[data-page="mapa"],#volume,#mapa{display:none!important}.hy-hide{display:none!important}
+.hy-cards{display:flex!important;flex-wrap:nowrap!important;gap:7px!important;overflow-x:auto!important;overflow-y:hidden!important;width:100%!important;padding-bottom:3px!important}.hy-cards>.card{flex:1 1 0!important;min-width:110px!important;max-width:none!important}
+.hy-grid3{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important;margin-top:7px!important;align-items:stretch!important}.hy-grid2{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important;margin-top:7px!important;align-items:stretch!important}.hy-grid3>.panel{min-width:0!important;width:100%!important;height:286px!important;min-height:286px!important;overflow:hidden!important}.hy-grid2>.panel{min-width:0!important;width:100%!important;height:420px!important;min-height:420px!important;overflow:auto!important}.hy-status{margin-top:7px!important;width:100%!important}.hy-status>.panel{width:100%!important}
+.hy-hbars{display:flex!important;flex-direction:column!important;gap:7px!important;height:232px!important;overflow-y:auto!important;overflow-x:hidden!important;padding-right:5px!important}.hy-row{display:grid!important;grid-template-columns:minmax(58px,27%) minmax(80px,1fr) 60px!important;gap:6px!important;align-items:center!important;min-height:23px!important;cursor:pointer!important}.hy-name{font-size:10px!important;font-weight:900!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}.hy-track{height:16px!important;border:1px solid var(--line)!important;background:rgba(127,127,127,.12)!important;border-radius:999px!important;overflow:hidden!important}.hy-fill{height:100%!important;border-radius:999px!important;background:var(--blue)!important}.hy-val{text-align:right!important;font-size:10px!important;font-weight:1000!important;white-space:nowrap!important}.hy-green{background:#00B050!important}.hy-yellow{background:#F5B642!important}.hy-red{background:#EF3340!important}.hy-gray{background:#7b8794!important}
+.hy-full-uf{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:0 28px!important;width:100%!important;height:auto!important;max-height:none!important;overflow:visible!important}.hy-full-col{display:flex!important;flex-direction:column!important;min-width:0!important}.hy-full-row{display:grid!important;grid-template-columns:52px minmax(100px,1fr) 64px!important;gap:7px!important;align-items:center!important;min-height:39px!important;cursor:pointer!important}.hy-full-name,.hy-full-val{font-weight:900!important}.hy-full-val{text-align:right!important}.hy-full-track{height:20px!important;border:1px solid var(--line)!important;background:rgba(127,127,127,.12)!important;border-radius:999px!important;overflow:hidden!important}.hy-full-fill{height:100%!important;border-radius:999px!important}
+#aging .agingMatrixPanel{display:block!important;width:100%!important;margin-top:7px!important}#aging #agingMatrix{display:block!important}#aging .panel:has(#alerts),#alerts{display:none!important}#hyAgingBottom>.panel{display:block!important;height:286px!important;min-height:286px!important;overflow:auto!important}#pendTsp .fill,#pendTsp .ct-fill,#pendTsp .bar{background:#7b8794!important}
+#cardsFarolAging{display:flex!important;flex-wrap:nowrap!important;gap:7px!important;overflow-x:auto!important}#cardsFarolAging>.card{flex:1 1 0!important;min-width:135px!important}
+#uf #mapNf{height:355px!important;min-height:355px!important;width:100%!important}#hyUfRank>.panel,#hyOtdUf>.panel{height:auto!important;max-height:none!important;overflow:visible!important}
+@media(max-width:1100px){.hy-grid3{grid-template-columns:repeat(3,minmax(230px,1fr))!important;overflow-x:auto!important}.hy-cards>.card{min-width:125px!important}.hy-full-uf{gap:0 12px!important}}
+@media(max-width:760px){.hy-grid3,.hy-grid2{grid-template-columns:minmax(0,1fr)!important;overflow:visible!important}.hy-grid3>.panel,.hy-grid2>.panel{height:auto!important;min-height:286px!important}.hy-cards>.card{min-width:145px!important}.hy-full-uf{grid-template-columns:minmax(0,1fr)!important}}
+</style>
+<script id="hy-final-v2-js">
+(function(){'use strict';
+const E=id=>document.getElementById(id),P=id=>{const e=E(id);return e&&e.closest('.panel')};
+const N=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+const F=n=>Number(n||0).toLocaleString('pt-BR'),PC=n=>Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})+'%';
+const X=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function pend(x){return typeof isPending==='function'?isPending(x):N(x.statusOtd).includes('pendente')}
+function holder(page,id,cls,after){let h=E(id);if(!h){h=document.createElement('div');h.id=id;h.className=cls;const a=after&&E(after);a?a.after(h):page.appendChild(h)}return h}
+function move(row,ids){ids.forEach(id=>{const p=P(id);if(p)row.appendChild(p)})}
+function custom(id,title){let p=E(id);if(!p){p=document.createElement('div');p.id=id;p.className='panel';p.innerHTML='<div class="pt">'+title+'</div><div id="'+id+'Host"></div>'}return p}
+function hideVolume(){document.querySelectorAll('.panel').forEach(p=>{const t=N(p.querySelector('.pt')?.textContent);if(t.includes('volume')||t.includes('otd hyundai'))p.classList.add('hy-hide')})}
+function upsert(box,key,title,value,cls){let c=box.querySelector('[data-hy-card="'+key+'"]');if(!c){c=document.createElement('div');c.className='card '+(cls||'');c.dataset.hyCard=key;box.appendChild(c)}c.innerHTML='<div class="k">'+title+'</div><div class="v">'+F(value)+'</div>';return c}
+function cards(){if(typeof rows!=='function')return;const r=rows(),total=r.length,vol=r.reduce((a,x)=>a+Number(x.vol||0),0),del=typeof metric==='function'?Number(metric(r,'nf').t||0):0,ps=r.filter(pend),inside=ps.filter(x=>N(x.statusOtd).includes('no prazo')).length,outside=ps.filter(x=>N(x.statusOtd).includes('fora')).length;
+ ['cardsG','cardsNf','cardsTsp','cardsUf','cardsCid','cardsAging','cardsOtdInicio'].forEach(id=>{const b=E(id);if(!b)return;b.classList.add('hy-cards');b.querySelectorAll('.card').forEach(c=>{const t=N(c.querySelector('.k')?.textContent||c.textContent);if(t.includes('volumes entregues')||t.includes('volumes fora prazo')||t.includes('atrasos vol')||t.includes('pendentes vol')||t.includes('vol. pendente')||t.includes('otd volume'))c.remove()});if(id!=='cardsAging')upsert(b,'total-nf','📄 Total de NFs',total,'');let vc=[...b.querySelectorAll('.card')].find(c=>N(c.querySelector('.k')?.textContent).includes('total de volumes')||N(c.querySelector('.k')?.textContent).includes('quantidade de volumes'));if(vc){vc.dataset.hyCard='vol';vc.innerHTML='<div class="k">📦 Quantidade de Volumes</div><div class="v">'+F(vol)+'</div>'}else upsert(b,'vol','📦 Quantidade de Volumes',vol,'purple');if(['cardsTsp','cardsUf','cardsCid'].includes(id))upsert(b,'delivered','📄 NF entregues',del,'')});
+ const a=E('cardsAging');if(a){upsert(a,'pend-inside','🟢 Pendentes NF no prazo',inside,'green');upsert(a,'pend-outside','🔴 Pendentes NF fora',outside,'red')}
+}
+function otd(){if(typeof rows!=='function'||typeof metric!=='function')return[];const r=rows();return[...new Set(r.map(x=>x.uf).filter(Boolean))].map(k=>({k,v:metric(r.filter(x=>x.uf===k),'nf').p})).sort((a,b)=>b.v-a.v)}
+function counts(key){const m={};(typeof rows==='function'?rows():[]).filter(pend).forEach(x=>{const k=x[key]||'Sem informação';m[k]=(m[k]||0)+1});return Object.entries(m).map(([k,v])=>({k,v})).sort((a,b)=>b.v-a.v)}
+function hbars(id,data,opt={}){const e=E(id);if(!e)return;const max=Math.max(1,...data.map(x=>x.v));e.innerHTML='<div class="hy-hbars">'+data.map(x=>{const w=opt.percent?Math.max(2,x.v):Math.max(2,100*x.v/max),cl=opt.percent?(x.v>=97?'hy-green':x.v>=90?'hy-yellow':'hy-red'):(opt.gray?'hy-gray':'');return'<div class="hy-row" data-k="'+X(x.k)+'"><div class="hy-name">'+X(x.k)+'</div><div class="hy-track"><div class="hy-fill '+cl+'" style="width:'+w+'%"></div></div><div class="hy-val">'+(opt.percent?PC(x.v):F(x.v))+'</div></div>'}).join('')+'</div>';e.querySelectorAll('.hy-row').forEach(r=>r.onclick=()=>{const k=r.dataset.k;if(typeof openRows==='function')openRows((opt.title||'Detalhamento')+': '+k,rows().filter(x=>x[opt.key]===k))})}
+function fullUf(id,title){const e=E(id);if(!e)return;const d=otd(),cut=Math.ceil(d.length/2),cols=[d.slice(0,cut),d.slice(cut)];e.innerHTML='<div class="hy-full-uf">'+cols.map(c=>'<div class="hy-full-col">'+c.map(x=>{const cl=x.v>=97?'hy-green':x.v>=90?'hy-yellow':'hy-red';return'<div class="hy-full-row" data-k="'+X(x.k)+'"><div class="hy-full-name">'+X(x.k)+'</div><div class="hy-full-track"><div class="hy-full-fill '+cl+'" style="width:'+Math.max(2,x.v)+'%"></div></div><div class="hy-full-val">'+PC(x.v)+'</div></div>'}).join('')+'</div>').join('')+'</div>';e.querySelectorAll('.hy-full-row').forEach(r=>r.onclick=()=>{const k=r.dataset.k;if(typeof openRows==='function')openRows(title+': '+k,rows().filter(x=>x.uf===k))})}
+function structure(){hideVolume();const g=E('geral');if(g){const t=holder(g,'hyGeneralTop','hy-grid3','cardsG');move(t,['gCe','rankCeT','ctAgeNf']);const b=holder(g,'hyGeneralBottom','hy-grid3');b.replaceChildren(custom('hyGuf','📍 OTD NF por UF'),custom('hyGtsp','🚚 Pendentes NF por TSP'),custom('hyGufPend','📍 Pendentes NF por UF'));const old=P('ctGufNf');if(old)old.classList.add('hy-hide')}
+ const n=E('nf');if(n){const t=holder(n,'hyNfTop','hy-grid3','cardsNf');move(t,['gNf','barNf','ctNfCidLate']);const b=holder(n,'hyNfBottom','hy-grid3');b.replaceChildren(custom('hyNuf','📍 OTD NF por UF'),custom('hyNtsp','🚚 Pendentes NF por TSP'),custom('hyNufPend','📍 Pendentes NF por UF'));const st=holder(n,'hyNfStatus','hy-status');const sp=P('tblNf');if(sp)st.appendChild(sp);const old=P('ctNfUf');if(old)old.classList.add('hy-hide')}
+ const a=E('aging');if(a){const matrix=P('agingMatrix');if(matrix){matrix.classList.remove('hy-hide');matrix.style.display='block';E('cardsAging')?.after(matrix)}const al=P('alerts');if(al)al.remove();const b=holder(a,'hyAgingBottom','hy-grid3');move(b,['agingBarsNf','pendTsp','pendUf']);a.appendChild(b);E('cardsFarolAging')?.classList.add('hy-cards')}
+ const tsp=E('tsp');if(tsp){const r=holder(tsp,'hyTspPair','hy-grid2','cardsTsp');move(r,['tspNf','tspLateNf'])}const city=E('cidade');if(city){const r=holder(city,'hyCityPair','hy-grid2','cardsCid');move(r,['cidLateNf','cidOtdNf'])}
+ const uf=E('uf'),map=E('mapNf');if(uf&&map){const rank=P('ufNf'),rh=holder(uf,'hyUfRank','hy-status','cardsUf');if(rank)rh.appendChild(rank);const pair=holder(uf,'hyUfPair','hy-grid2');const mp=map.closest('.panel'),late=P('ufLateNf');if(mp){mp.classList.remove('hy-hide');mp.querySelector('.pt').textContent='🗺️ Mapa Brasil — OTD por NF';pair.appendChild(mp)}if(late)pair.appendChild(late)}
+ const oi=E('otdinicio');if(oi){const t=holder(oi,'hyOtdTop','hy-grid3','cardsOtdInicio');move(t,['gOtdInicio','rankOtdInicio','lateCityOtd']);const u=holder(oi,'hyOtdUf','hy-status'),up=P('rankOtdUf');if(up)u.appendChild(up);const st=holder(oi,'hyOtdStatus','hy-status'),sp=P('statusOtdMatrix');if(sp)st.appendChild(sp)}
+ document.querySelectorAll('.page>.grid2,.page>.grid3').forEach(x=>{if(![...x.children].some(c=>c.classList.contains('panel')&&!c.classList.contains('hy-hide')))x.style.display='none'})}
+function dataRender(){hbars('hyGufHost',otd(),{percent:true,title:'OTD NF por UF',key:'uf'});hbars('hyGtspHost',counts('tsp'),{gray:true,title:'Pendentes NF por TSP',key:'tsp'});hbars('hyGufPendHost',counts('uf'),{title:'Pendentes NF por UF',key:'uf'});hbars('hyNufHost',otd(),{percent:true,title:'OTD NF por UF',key:'uf'});hbars('hyNtspHost',counts('tsp'),{gray:true,title:'Pendentes NF por TSP',key:'tsp'});hbars('hyNufPendHost',counts('uf'),{title:'Pendentes NF por UF',key:'uf'});hbars('pendTsp',counts('tsp'),{gray:true,title:'Pendentes NF por TSP',key:'tsp'});hbars('pendUf',counts('uf'),{title:'Pendentes NF por UF',key:'uf'});fullUf('ufNf','OTD NF por UF');fullUf('rankOtdUf','OTD por UF')}
+function mapRefresh(){if(typeof page!=='undefined'&&page==='uf'&&typeof oneMap==='function'&&typeof rows==='function'){try{if(MAPS.mapNf){MAPS.mapNf.remove();delete MAPS.mapNf}E('mapNf').innerHTML='';oneMap('mapNf',rows(),'nf','OTD por NF')}catch(e){console.warn('Mapa',e)}}}
+function apply(){structure();cards();dataRender();mapRefresh()}
+function install(){if(typeof render!=='function'||render.__hyFinalV2)return;const old=render;render=function(){const r=old.apply(this,arguments);apply();return r};render.__hyFinalV2=true}
+function boot(){install();apply()}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();})();
+</script>
+
+
+
+<!-- HYUNDAI AJUSTE PONTUAL V3 -->
+<style id="hy-point-v3-css">
+/* Performance NF em Transito sempre visivel */
+#aging .agingMatrixPanel,#aging .panel:has(#agingMatrix),#aging #agingMatrix{display:block!important;visibility:visible!important;opacity:1!important}
+#aging .agingMatrixPanel{width:100%!important;max-height:520px!important;height:auto!important;min-height:0!important;overflow:auto!important;margin-top:7px!important}
+
+/* Remove excesso de altura fixa na Transportadora */
+#hyTspPair{align-items:start!important}
+#hyTspPair>.panel{height:auto!important;min-height:255px!important;max-height:350px!important;overflow:auto!important}
+#hyTspPair #tspNf,#hyTspPair #tspLateNf{height:auto!important;min-height:205px!important;max-height:285px!important}
+
+/* Por NF mais compacto, sem grandes vazios */
+#hyNfTop>.panel,#hyNfBottom>.panel{height:255px!important;min-height:255px!important;max-height:255px!important;overflow:auto!important}
+#hyNfTop .gauge{height:205px!important}
+#hyNfTop .bars,#hyNfBottom .hy-hbars{height:205px!important;max-height:205px!important}
+
+@media(max-width:760px){#hyTspPair>.panel,#hyNfTop>.panel,#hyNfBottom>.panel{height:auto!important;max-height:none!important;min-height:255px!important}}
+</style>
+<script id="hy-point-v3-js">
+(function(){'use strict';
+const E=id=>document.getElementById(id),P=id=>{const e=E(id);return e&&e.closest('.panel')};
+const N=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+const F=n=>Number(n||0).toLocaleString('pt-BR');
+function restorePerformance(){
+ const aging=E('aging'),matrix=E('agingMatrix');if(!aging||!matrix)return;
+ const panel=matrix.closest('.panel');if(!panel)return;
+ panel.classList.remove('hy-hide','hide');panel.style.setProperty('display','block','important');
+ const cards=E('cardsAging');if(cards&&cards.nextElementSibling!==panel)cards.after(panel);
+ const title=panel.querySelector('.pt');if(title)title.innerHTML='Performance NF em Trânsito <span class="matrixHint">Clique nos números para visualizar as NFs</span>';
+}
+function replaceVolumeCard(){
+ if(typeof rows!=='function')return;const r=rows();const delivered=typeof metric==='function'?Number(metric(r,'nf').t||0):r.filter(x=>N(x.statusOtd)==='no prazo'||N(x.statusOtd)==='fora prazo').length;
+ document.querySelectorAll('.card').forEach(card=>{const t=N(card.querySelector('.k')?.textContent||card.textContent);if(t.includes('volumes no prazo')){card.className='card green';card.setAttribute('data-replaced-volume-card','1');card.innerHTML='<div class="k">📄 NFs entregues</div><div class="v">'+F(delivered)+'</div>'}});
+}
+function compactPanels(){
+ const pair=E('hyTspPair');if(pair)pair.querySelectorAll(':scope>.panel').forEach(x=>{x.style.height='auto';x.style.minHeight='255px';x.style.maxHeight='350px'});
+ ['hyNfTop','hyNfBottom'].forEach(id=>{const row=E(id);if(row)row.querySelectorAll(':scope>.panel').forEach(x=>{x.style.height='255px';x.style.minHeight='255px';x.style.maxHeight='255px'})});
+}
+function apply(){restorePerformance();replaceVolumeCard();compactPanels()}
+function install(){if(typeof render!=='function'||render.__hyPointV3)return;const old=render;render=function(){const result=old.apply(this,arguments);apply();return result};render.__hyPointV3=true}
+function boot(){install();apply()}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
+})();
+</script>
+
+
+
+<!-- HYUNDAI CORRECAO MATRIZ E GRAFICOS -->
+<style id="hy-matrix-fix-css">
+/* Usa exclusivamente a matriz original Performance NF em Transito */
+#hyPerfTransit,#hyPerformancePanel{display:none!important}
+#aging .agingMatrixPanel,#aging .panel:has(#agingMatrix){
+ display:block!important;visibility:visible!important;opacity:1!important;
+ width:100%!important;height:auto!important;min-height:0!important;max-height:540px!important;
+ margin-top:7px!important;overflow:auto!important
+}
+#aging #agingMatrix{display:block!important;width:100%!important;height:auto!important;min-height:0!important;overflow:visible!important}
+#aging .agingMatrixPanel .metric,#aging .agingMatrixPanel table{width:100%!important}
+
+/* NF por TSP: folga real acima dos valores */
+#hyNfTop>.panel:has(#barNf){overflow:visible!important;padding-top:10px!important}
+#hyNfTop #barNf{
+ height:228px!important;min-height:228px!important;
+ padding:62px 8px 24px!important;
+ overflow-x:auto!important;overflow-y:visible!important
+}
+#hyNfTop #barNf .bi,#hyNfTop #barNf .bar,#hyNfTop #barNf .bl{overflow:visible!important}
+#hyNfTop #barNf .bl{top:-23px!important;font-size:8.8px!important;line-height:1!important;white-space:nowrap!important;z-index:4!important}
+
+/* OTD Inicio usa exatamente o mesmo desenho e dimensoes da pagina Por UF */
+#rankOtdUf .hy-full-uf{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:0 28px!important;height:auto!important;max-height:none!important;overflow:visible!important}
+#otdinicio .panel:has(#rankOtdUf){height:auto!important;max-height:none!important;overflow:visible!important}
+@media(max-width:700px){#rankOtdUf .hy-full-uf{grid-template-columns:minmax(0,1fr)!important}}
+</style>
+<script id="hy-matrix-fix-js">
+(function(){'use strict';
+const E=id=>document.getElementById(id);
+function restoreOriginalMatrix(){
+ const page=E('aging'),matrix=E('agingMatrix'),cards=E('cardsAging');
+ if(!page||!matrix)return;
+ const panel=matrix.closest('.panel');if(!panel)return;
+ panel.classList.remove('hy-hide','hide');
+ panel.style.setProperty('display','block','important');
+ panel.style.setProperty('visibility','visible','important');
+ const title=panel.querySelector('.pt');
+ if(title)title.innerHTML='Performance NF em Trânsito <span class="matrixHint">Clique nos números para visualizar as NFs</span>';
+ if(cards&&cards.nextElementSibling!==panel)cards.after(panel);
+ try{if(typeof agingMatrixRender==='function')agingMatrixRender(rows())}catch(e){}
+ try{if(typeof renderAgingMatrix==='function')renderAgingMatrix(rows())}catch(e){}
+}
+function syncOtdUf(){
+ const source=E('ufNf'),target=E('rankOtdUf');if(!source||!target)return;
+ /* A mesma funcao e a mesma base garantem percentuais identicos nas duas paginas. */
+ try{if(typeof fullUf==='function'){fullUf('ufNf','OTD NF por UF');fullUf('rankOtdUf','OTD por UF');return}}catch(e){}
+ target.innerHTML=source.innerHTML;
+ target.querySelectorAll('.hy-full-row').forEach(row=>{row.onclick=()=>{const uf=row.dataset.k||row.dataset.uf;if(uf&&typeof openRows==='function')openRows('OTD por UF: '+uf,rows().filter(x=>x.uf===uf))}});
+}
+function hideCustomPerformance(){['hyPerfTransit','hyPerformancePanel'].forEach(id=>{const x=E(id);if(x)x.remove()})}
+function apply(){hideCustomPerformance();restoreOriginalMatrix();syncOtdUf()}
+function install(){if(typeof render!=='function'||render.__hyMatrixFix)return;const old=render;render=function(){const result=old.apply(this,arguments);apply();return result};render.__hyMatrixFix=true}
+function boot(){install();apply()}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
+})();
+</script>
+
+
+
+<!-- CORRECOES INDEX 107 -->
+<style id="fix-107-css">
+/* Gauge Por NF: centraliza o numero dentro do semicirculo */
+#hyNfTop .panel:has(#gNf){overflow:hidden!important}
+#hyNfTop #gNf{height:220px!important;position:relative!important;overflow:hidden!important}
+#hyNfTop #gNf svg{height:178px!important;transform:translateY(11px)!important}
+#hyNfTop #gNf .gnum{top:98px!important;font-size:29px!important;line-height:31px!important;z-index:3!important}
+#hyNfTop #gNf .gmeta{top:138px!important;line-height:1.12!important;z-index:3!important}
+
+/* NF por TSP: separa os numeros do limite superior */
+#hyNfTop .panel:has(#barNf){overflow:visible!important}
+#hyNfTop #barNf{height:228px!important;padding:64px 8px 23px!important;overflow-x:auto!important;overflow-y:visible!important}
+#hyNfTop #barNf .bar,#hyNfTop #barNf .bi,#hyNfTop #barNf .bl{overflow:visible!important}
+#hyNfTop #barNf .bl{top:-24px!important;font-size:8.8px!important;line-height:1!important;white-space:nowrap!important;z-index:5!important}
+
+/* Matriz original: No prazo e 1 a 5 dias em colunas separadas */
+#aging .agingMatrixPanel{display:block!important;visibility:visible!important;width:100%!important;max-height:540px!important;overflow:auto!important}
+#aging #agingMatrix{display:block!important;width:100%!important;min-width:900px!important}
+#aging .agingMatrix{min-width:900px!important}
+#aging .agingMatrix th:first-child{min-width:360px!important}
+#aging .agingMatrix th:not(:first-child){min-width:120px!important}
+
+/* OTD Inicio: mesmo layout da pagina Por UF */
+#otdinicio .panel:has(#rankOtdUf){height:auto!important;max-height:none!important;overflow:visible!important}
+#rankOtdUf .hy-full-uf{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:0 28px!important;max-height:none!important;overflow:visible!important}
+@media(max-width:700px){#rankOtdUf .hy-full-uf{grid-template-columns:minmax(0,1fr)!important}}
+</style>
+<script id="fix-107-js">
+(function(){'use strict';
+const E=id=>document.getElementById(id);
+const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=n=>Number(n||0).toLocaleString('pt-BR');
+function isPend(x){return typeof isPending==='function'?isPending(x):norm(x.statusOtd).includes('pendente')}
+function ageBand(x){
+ const d=Number(x.diasAtraso||0);
+ if(d<=0)return 'ontime';
+ if(d<=5)return 'd1_5';
+ if(d<=9)return 'd6_9';
+ return 'd10';
+}
+function occurrence(x){return String(x.ocorrencia||x.ultimaOcorrencia||x.statusOcorrencia||x.obs||x.observacao||x.status||'Sem atualização operacional').trim()||'Sem atualização operacional'}
+function renderPerformance(){
+ const host=E('agingMatrix');if(!host||typeof rows!=='function')return;
+ const list=rows().filter(isPend),tree={};
+ list.forEach(x=>{const reg=x.regiao||'Sem região',occ=occurrence(x),band=ageBand(x);tree[reg]??={};tree[reg][occ]??={ontime:0,d1_5:0,d6_9:0,d10:0,rows:[]};tree[reg][occ][band]++;tree[reg][occ].rows.push(x)});
+ const regions=Object.keys(tree).sort();
+ const sum=o=>o.ontime+o.d1_5+o.d6_9+o.d10;
+ const cell=(n,reg,occ,band)=>n?'<button class="matrixNum" data-reg="'+esc(reg)+'" data-occ="'+esc(occ||'')+'" data-band="'+band+'">'+fmt(n)+'</button>':'<span class="matrixZero">—</span>';
+ let totals={ontime:0,d1_5:0,d6_9:0,d10:0};
+ let html='<table class="agingMatrix"><thead><tr><th>Acompanhamento de entrega</th><th>No prazo</th><th>1 a 5 dias</th><th>6 a 9 dias</th><th>10 ou mais dias</th><th>Total Geral</th></tr></thead><tbody>';
+ regions.forEach(reg=>{let rt={ontime:0,d1_5:0,d6_9:0,d10:0};Object.values(tree[reg]).forEach(o=>Object.keys(rt).forEach(k=>rt[k]+=o[k]));Object.keys(totals).forEach(k=>totals[k]+=rt[k]);html+='<tr class="matrixRegion"><td>▾ '+esc(reg)+'</td><td>'+cell(rt.ontime,reg,'','ontime')+'</td><td>'+cell(rt.d1_5,reg,'','d1_5')+'</td><td>'+cell(rt.d6_9,reg,'','d6_9')+'</td><td>'+cell(rt.d10,reg,'','d10')+'</td><td>'+cell(sum(rt),reg,'','all')+'</td></tr>';Object.entries(tree[reg]).sort((a,b)=>sum(b[1])-sum(a[1])).forEach(([occ,o])=>{html+='<tr class="matrixDetail"><td><span class="matrixIndent">'+esc(occ)+'</span></td><td>'+cell(o.ontime,reg,occ,'ontime')+'</td><td>'+cell(o.d1_5,reg,occ,'d1_5')+'</td><td>'+cell(o.d6_9,reg,occ,'d6_9')+'</td><td>'+cell(o.d10,reg,occ,'d10')+'</td><td>'+cell(sum(o),reg,occ,'all')+'</td></tr>'})});
+ html+='</tbody><tfoot><tr><td>Total Geral</td><td>'+cell(totals.ontime,'','','ontime')+'</td><td>'+cell(totals.d1_5,'','','d1_5')+'</td><td>'+cell(totals.d6_9,'','','d6_9')+'</td><td>'+cell(totals.d10,'','','d10')+'</td><td>'+cell(sum(totals),'','','all')+'</td></tr></tfoot></table>';host.innerHTML=html;
+ host.querySelectorAll('.matrixNum').forEach(b=>b.onclick=()=>{let rr=rows().filter(isPend),reg=b.dataset.reg,occ=b.dataset.occ,band=b.dataset.band;if(reg)rr=rr.filter(x=>(x.regiao||'Sem região')===reg);if(occ)rr=rr.filter(x=>occurrence(x)===occ);if(band&&band!=='all')rr=rr.filter(x=>ageBand(x)===band);if(typeof openRows==='function')openRows('Performance NF em Trânsito',rr)});
+}
+function exactUfData(){
+ if(typeof rows!=='function'||typeof metric!=='function')return[];
+ const r=rows();return [...new Set(r.map(x=>x.uf).filter(Boolean))].map(uf=>{const subset=r.filter(x=>x.uf===uf),m=metric(subset,'nf');return{uf,p:m.p,total:m.t}}).filter(x=>Number(x.total)>0).sort((a,b)=>b.p-a.p);
+}
+function renderOtdInicioUf(){
+ const host=E('rankOtdUf');if(!host)return;const data=exactUfData(),cut=Math.ceil(data.length/2),cols=[data.slice(0,cut),data.slice(cut)];
+ const pct=n=>Number(n).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})+'%';
+ host.innerHTML='<div class="hy-full-uf">'+cols.map(col=>'<div class="hy-full-col">'+col.map(x=>{const cl=x.p>=97?'hy-green':x.p>=90?'hy-yellow':'hy-red';return '<div class="hy-full-row" data-uf="'+esc(x.uf)+'"><div class="hy-full-name">'+esc(x.uf)+'</div><div class="hy-full-track"><div class="hy-full-fill '+cl+'" style="width:'+Math.max(2,Math.min(100,x.p))+'%"></div></div><div class="hy-full-val">'+pct(x.p)+'</div></div>'}).join('')+'</div>').join('')+'</div>';
+ host.querySelectorAll('.hy-full-row').forEach(r=>r.onclick=()=>{const uf=r.dataset.uf;if(typeof openRows==='function')openRows('OTD por UF: '+uf,rows().filter(x=>x.uf===uf))});
+}
+function apply(){renderPerformance();renderOtdInicioUf()}
+function install(){if(typeof render!=='function'||render.__fix107)return;const previous=render;render=function(){const result=previous.apply(this,arguments);apply();return result};render.__fix107=true}
+function boot(){install();apply()}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
+})();
+</script>
+
+
+
+<!-- AJUSTE INDEX108 OCORRENCIA E CIDADE -->
+<style id="fix-108-occ-city-css">
+/* Performance NF em Transito: somente Regiao > Ocorrencia */
+#hyPerfTransit,#hyPerformancePanel{display:none!important}
+#aging .agingMatrixPanel,#aging .panel:has(#agingMatrix){display:block!important;visibility:visible!important;width:100%!important;height:auto!important;max-height:540px!important;overflow:auto!important;margin-top:7px!important}
+#aging #agingMatrix{display:block!important;width:100%!important;min-width:920px!important}
+#aging .agingMatrix{width:100%!important;min-width:920px!important;border-collapse:collapse!important}
+#aging .agingMatrix th:first-child{min-width:390px!important;text-align:left!important}
+#aging .agingMatrix th:not(:first-child){min-width:115px!important;text-align:center!important}
+
+/* Pagina Por Cidade: paineis compactos, sem altura herdada de 420px */
+#cidade .hy-grid2,#cidade #hyCityPair{align-items:start!important}
+#cidade .hy-grid2>.panel,#cidade #hyCityPair>.panel{height:310px!important;min-height:310px!important;max-height:310px!important;overflow:hidden!important}
+#cidade #cidLateNf{height:245px!important;min-height:245px!important;max-height:245px!important;padding:42px 8px 16px!important}
+#cidade #cidOtdNf{height:245px!important;min-height:245px!important;max-height:245px!important;overflow-y:auto!important;overflow-x:hidden!important}
+@media(max-width:900px){#cidade .hy-grid2>.panel,#cidade #hyCityPair>.panel{height:auto!important;min-height:290px!important;max-height:none!important}}
+</style>
+<script id="fix-108-occ-city-js">
+(function(){'use strict';
+const E=id=>document.getElementById(id);
+const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=n=>Number(n||0).toLocaleString('pt-BR');
+function pending(x){return typeof isPending==='function'?isPending(x):norm(x.statusOtd).includes('pendente')}
+function occurrence(x){
+ const keys=['ocorrencia','ultimaOcorrencia','statusOcorrencia','ocorrenciaEntrega','descricaoOcorrencia','descOcorrencia','obs','observacao'];
+ for(const key of keys){const value=String(x[key]??'').trim();if(value&&!/pendente\s*(fora|no prazo)/i.test(value))return value}
+ return 'Sem atualização operacional';
+}
+function band(x){const d=Number(x.diasAtraso||0);if(d<=0)return'ontime';if(d<=5)return'd1_5';if(d<=9)return'd6_9';return'd10'}
+function renderOccurrenceMatrix(){
+ const host=E('agingMatrix');if(!host||typeof rows!=='function')return;
+ const list=rows().filter(pending),tree={};
+ list.forEach(x=>{const reg=x.regiao||'Sem região',occ=occurrence(x),b=band(x);tree[reg]??={};tree[reg][occ]??={ontime:0,d1_5:0,d6_9:0,d10:0};tree[reg][occ][b]++});
+ const sum=o=>o.ontime+o.d1_5+o.d6_9+o.d10;
+ const cell=(n,reg,occ,b)=>n?'<button class="matrixNum" data-reg="'+esc(reg)+'" data-occ="'+esc(occ)+'" data-band="'+b+'">'+fmt(n)+'</button>':'<span class="matrixZero">—</span>';
+ let grand={ontime:0,d1_5:0,d6_9:0,d10:0};
+ let html='<table class="agingMatrix"><thead><tr><th>Acompanhamento de entrega</th><th>No prazo</th><th>1 a 5 dias</th><th>6 a 9 dias</th><th>10 ou mais dias</th><th>Total Geral</th></tr></thead><tbody>';
+ Object.keys(tree).sort().forEach(reg=>{let total={ontime:0,d1_5:0,d6_9:0,d10:0};Object.values(tree[reg]).forEach(o=>Object.keys(total).forEach(k=>total[k]+=o[k]));Object.keys(grand).forEach(k=>grand[k]+=total[k]);html+='<tr class="matrixRegion"><td>▾ '+esc(reg)+'</td><td>'+cell(total.ontime,reg,'','ontime')+'</td><td>'+cell(total.d1_5,reg,'','d1_5')+'</td><td>'+cell(total.d6_9,reg,'','d6_9')+'</td><td>'+cell(total.d10,reg,'','d10')+'</td><td>'+cell(sum(total),reg,'','all')+'</td></tr>';Object.entries(tree[reg]).sort((a,b)=>sum(b[1])-sum(a[1])).forEach(([occ,o])=>{html+='<tr class="matrixDetail"><td><span class="matrixIndent">'+esc(occ)+'</span></td><td>'+cell(o.ontime,reg,occ,'ontime')+'</td><td>'+cell(o.d1_5,reg,occ,'d1_5')+'</td><td>'+cell(o.d6_9,reg,occ,'d6_9')+'</td><td>'+cell(o.d10,reg,occ,'d10')+'</td><td>'+cell(sum(o),reg,occ,'all')+'</td></tr>'})});
+ html+='</tbody><tfoot><tr><td>Total Geral</td><td>'+cell(grand.ontime,'','','ontime')+'</td><td>'+cell(grand.d1_5,'','','d1_5')+'</td><td>'+cell(grand.d6_9,'','','d6_9')+'</td><td>'+cell(grand.d10,'','','d10')+'</td><td>'+cell(sum(grand),'','','all')+'</td></tr></tfoot></table>';host.innerHTML=html;
+ host.querySelectorAll('.matrixNum').forEach(button=>button.onclick=()=>{let rr=rows().filter(pending),reg=button.dataset.reg,occ=button.dataset.occ,b=button.dataset.band;if(reg)rr=rr.filter(x=>(x.regiao||'Sem região')===reg);if(occ)rr=rr.filter(x=>occurrence(x)===occ);if(b&&b!=='all')rr=rr.filter(x=>band(x)===b);if(typeof openRows==='function')openRows('Performance NF em Trânsito',rr)});
+ const panel=host.closest('.panel');if(panel){panel.classList.remove('hy-hide','hide');panel.style.setProperty('display','block','important');const title=panel.querySelector('.pt');if(title)title.innerHTML='Performance NF em Trânsito <span class="matrixHint">Clique nos números para visualizar as NFs</span>';const cards=E('cardsAging');if(cards&&cards.nextElementSibling!==panel)cards.after(panel)}
+}
+function compactCity(){const page=E('cidade');if(!page)return;const row=E('hyCityPair')||page.querySelector('.hy-grid2');if(!row)return;row.querySelectorAll(':scope>.panel').forEach(panel=>{panel.style.height='310px';panel.style.minHeight='310px';panel.style.maxHeight='310px';panel.style.overflow='hidden'});const late=E('cidLateNf'),otd=E('cidOtdNf');if(late){late.style.height='245px';late.style.minHeight='245px';late.style.maxHeight='245px'}if(otd){otd.style.height='245px';otd.style.minHeight='245px';otd.style.maxHeight='245px';otd.style.overflowY='auto'}}
+function apply(){['hyPerfTransit','hyPerformancePanel'].forEach(id=>E(id)?.remove());renderOccurrenceMatrix();compactCity()}
+function install(){if(typeof render!=='function'||render.__fix108OccCity)return;const previous=render;render=function(){const result=previous.apply(this,arguments);apply();return result};render.__fix108OccCity=true}
+function boot(){install();apply()}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
+})();
+</script>
+
+
+
+<!-- CORRECAO INDEX110: DUPLICIDADE E COLUNA S -->
+<style id="fix-index110-css">
+#cardsG{display:flex!important;flex-wrap:nowrap!important;gap:7px!important;width:100%!important;overflow-x:auto!important}
+#cardsG>.card{flex:1 1 0!important;min-width:112px!important;max-width:none!important}
+</style>
+<script id="fix-index110-js">
+(function(){'use strict';
+const E=id=>document.getElementById(id);
+const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=n=>Number(n||0).toLocaleString('pt-BR');
+function pending(x){return typeof isPending==='function'?isPending(x):norm(x.statusOtd).includes('pendente')}
+function occurrence(x){const v=String(x.ocorrencia||'').trim();return v&&v!=='Não informado'?v:'Sem atualização operacional'}
+function band(x){const d=Number(x.diasAtraso||0);if(d<=0)return'ontime';if(d<=5)return'd1_5';if(d<=9)return'd6_9';return'd10'}
+function dedupeDelivered(){
+ const box=E('cardsG');if(!box)return;
+ const cards=[...box.querySelectorAll('.card')].filter(c=>{const t=norm(c.querySelector('.k')?.textContent||c.textContent);return t.includes('nfs entregues')||t==='nf entregues'});
+ cards.slice(1).forEach(c=>c.remove());
+}
+function renderOccurrenceMatrix(){
+ const host=E('agingMatrix');if(!host||typeof rows!=='function')return;
+ const list=rows().filter(pending),tree={};
+ list.forEach(x=>{const reg=x.regiao||'Sem região',occ=occurrence(x),b=band(x);tree[reg]??={};tree[reg][occ]??={ontime:0,d1_5:0,d6_9:0,d10:0};tree[reg][occ][b]++});
+ const sum=o=>o.ontime+o.d1_5+o.d6_9+o.d10;
+ const cell=(n,reg,occ,b)=>n?'<button class="matrixNum" data-reg="'+esc(reg)+'" data-occ="'+esc(occ)+'" data-band="'+b+'">'+fmt(n)+'</button>':'<span class="matrixZero">—</span>';
+ let grand={ontime:0,d1_5:0,d6_9:0,d10:0};
+ let html='<table class="agingMatrix"><thead><tr><th>Acompanhamento de entrega</th><th>No prazo</th><th>1 a 5 dias</th><th>6 a 9 dias</th><th>10 ou mais dias</th><th>Total Geral</th></tr></thead><tbody>';
+ Object.keys(tree).sort().forEach(reg=>{let total={ontime:0,d1_5:0,d6_9:0,d10:0};Object.values(tree[reg]).forEach(o=>Object.keys(total).forEach(k=>total[k]+=o[k]));Object.keys(grand).forEach(k=>grand[k]+=total[k]);html+='<tr class="matrixRegion"><td>▾ '+esc(reg)+'</td><td>'+cell(total.ontime,reg,'','ontime')+'</td><td>'+cell(total.d1_5,reg,'','d1_5')+'</td><td>'+cell(total.d6_9,reg,'','d6_9')+'</td><td>'+cell(total.d10,reg,'','d10')+'</td><td>'+cell(sum(total),reg,'','all')+'</td></tr>';Object.entries(tree[reg]).sort((a,b)=>sum(b[1])-sum(a[1])).forEach(([occ,o])=>{html+='<tr class="matrixDetail"><td><span class="matrixIndent">'+esc(occ)+'</span></td><td>'+cell(o.ontime,reg,occ,'ontime')+'</td><td>'+cell(o.d1_5,reg,occ,'d1_5')+'</td><td>'+cell(o.d6_9,reg,occ,'d6_9')+'</td><td>'+cell(o.d10,reg,occ,'d10')+'</td><td>'+cell(sum(o),reg,occ,'all')+'</td></tr>'})});
+ html+='</tbody><tfoot><tr><td>Total Geral</td><td>'+cell(grand.ontime,'','','ontime')+'</td><td>'+cell(grand.d1_5,'','','d1_5')+'</td><td>'+cell(grand.d6_9,'','','d6_9')+'</td><td>'+cell(grand.d10,'','','d10')+'</td><td>'+cell(sum(grand),'','','all')+'</td></tr></tfoot></table>';host.innerHTML=html;
+ host.querySelectorAll('.matrixNum').forEach(button=>button.onclick=()=>{let rr=rows().filter(pending),reg=button.dataset.reg,occ=button.dataset.occ,b=button.dataset.band;if(reg)rr=rr.filter(x=>(x.regiao||'Sem região')===reg);if(occ)rr=rr.filter(x=>occurrence(x)===occ);if(b&&b!=='all')rr=rr.filter(x=>band(x)===b);if(typeof openRows==='function')openRows('Performance NF em Trânsito',rr)});
+}
+function apply(){dedupeDelivered();renderOccurrenceMatrix()}
+function install(){if(typeof render!=='function'||render.__fixIndex110)return;const old=render;render=function(){const result=old.apply(this,arguments);apply();return result};render.__fixIndex110=true}
+function boot(){install();apply()}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
+})();
+</script>
+
+
+
+<!-- CORRECAO INDEX111 STATUS_1 E CARD DUPLICADO -->
+<style id="fix-index111-css">
+#cardsOtdInicio{display:flex!important;flex-wrap:nowrap!important;gap:7px!important;width:100%!important;overflow-x:auto!important}
+#cardsOtdInicio>.card{flex:1 1 0!important;min-width:112px!important;max-width:none!important}
+</style>
+<script id="fix-index111-js">
+(function(){'use strict';
+const E=id=>document.getElementById(id);
+const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=n=>Number(n||0).toLocaleString('pt-BR');
+function pending(x){return typeof isPending==='function'?isPending(x):norm(x.statusOtd).includes('pendente')}
+/* Coluna S da base = Status_1, ja normalizada no objeto como status1. */
+function occurrence(x){const v=String(x.status1||'').trim();return v&&v!=='Não informado'?v:'Sem atualização operacional'}
+function band(x){const d=Number(x.diasAtraso||0);if(d<=0)return'ontime';if(d<=5)return'd1_5';if(d<=9)return'd6_9';return'd10'}
+function dedupeTotalNf(){
+ const box=E('cardsOtdInicio');if(!box)return;
+ const cards=[...box.querySelectorAll('.card')].filter(c=>norm(c.querySelector('.k')?.textContent||c.textContent).includes('total de nfs'));
+ cards.slice(1).forEach(c=>c.remove());
+}
+function renderMatrix(){
+ const host=E('agingMatrix');if(!host||typeof rows!=='function')return;
+ const list=rows().filter(pending),tree={};
+ list.forEach(x=>{const reg=x.regiao||'Sem região',occ=occurrence(x),b=band(x);tree[reg]??={};tree[reg][occ]??={ontime:0,d1_5:0,d6_9:0,d10:0};tree[reg][occ][b]++});
+ const sum=o=>o.ontime+o.d1_5+o.d6_9+o.d10;
+ const cell=(n,reg,occ,b)=>n?'<button class="matrixNum" data-reg="'+esc(reg)+'" data-occ="'+esc(occ)+'" data-band="'+b+'">'+fmt(n)+'</button>':'<span class="matrixZero">—</span>';
+ let grand={ontime:0,d1_5:0,d6_9:0,d10:0};
+ let html='<table class="agingMatrix"><thead><tr><th>Acompanhamento de entrega</th><th>No prazo</th><th>1 a 5 dias</th><th>6 a 9 dias</th><th>10 ou mais dias</th><th>Total Geral</th></tr></thead><tbody>';
+ Object.keys(tree).sort().forEach(reg=>{let total={ontime:0,d1_5:0,d6_9:0,d10:0};Object.values(tree[reg]).forEach(o=>Object.keys(total).forEach(k=>total[k]+=o[k]));Object.keys(grand).forEach(k=>grand[k]+=total[k]);html+='<tr class="matrixRegion"><td>▾ '+esc(reg)+'</td><td>'+cell(total.ontime,reg,'','ontime')+'</td><td>'+cell(total.d1_5,reg,'','d1_5')+'</td><td>'+cell(total.d6_9,reg,'','d6_9')+'</td><td>'+cell(total.d10,reg,'','d10')+'</td><td>'+cell(sum(total),reg,'','all')+'</td></tr>';Object.entries(tree[reg]).sort((a,b)=>sum(b[1])-sum(a[1])).forEach(([occ,o])=>{html+='<tr class="matrixDetail"><td><span class="matrixIndent">'+esc(occ)+'</span></td><td>'+cell(o.ontime,reg,occ,'ontime')+'</td><td>'+cell(o.d1_5,reg,occ,'d1_5')+'</td><td>'+cell(o.d6_9,reg,occ,'d6_9')+'</td><td>'+cell(o.d10,reg,occ,'d10')+'</td><td>'+cell(sum(o),reg,occ,'all')+'</td></tr>'})});
+ html+='</tbody><tfoot><tr><td>Total Geral</td><td>'+cell(grand.ontime,'','','ontime')+'</td><td>'+cell(grand.d1_5,'','','d1_5')+'</td><td>'+cell(grand.d6_9,'','','d6_9')+'</td><td>'+cell(grand.d10,'','','d10')+'</td><td>'+cell(sum(grand),'','','all')+'</td></tr></tfoot></table>';host.innerHTML=html;
+ host.querySelectorAll('.matrixNum').forEach(button=>button.onclick=()=>{let rr=rows().filter(pending),reg=button.dataset.reg,occ=button.dataset.occ,b=button.dataset.band;if(reg)rr=rr.filter(x=>(x.regiao||'Sem região')===reg);if(occ)rr=rr.filter(x=>occurrence(x)===occ);if(b&&b!=='all')rr=rr.filter(x=>band(x)===b);if(typeof openRows==='function')openRows('Performance NF em Trânsito',rr)});
+}
+function apply(){dedupeTotalNf();renderMatrix()}
+function install(){if(typeof render!=='function'||render.__fixIndex111)return;const old=render;render=function(){const result=old.apply(this,arguments);apply();return result};render.__fixIndex111=true}
+function boot(){install();apply()}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
+})();
+</script>
+
+
+
+<!-- CORRECAO INDEX112: TOTAL 258, CLIQUES E CARDS -->
+<style id="fix-index112-css">
+#cardsTsp,#cardsUf,#cardsCid{display:flex!important;flex-wrap:nowrap!important;gap:7px!important;width:100%!important;overflow-x:auto!important;overflow-y:hidden!important}
+#cardsTsp>.card,#cardsUf>.card,#cardsCid>.card{flex:1 1 0!important;min-width:112px!important;max-width:none!important}
+#aging .matrixNum{pointer-events:auto!important;cursor:pointer!important;position:relative!important;z-index:4!important}
+.hy-row,.rank,.bar,.bi,.hy-full-row{cursor:pointer!important}
+</style>
+<script id="fix-index112-js">
+(function(){'use strict';
+const E=id=>document.getElementById(id);
+const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=n=>Number(n||0).toLocaleString('pt-BR');
+function occurrence(x){const v=String(x.status1||'').trim();return v&&v!=='Não informado'?v:'Sem atualização operacional'}
+function band(x){const d=Number(x.diasAtraso||0);if(d<=0)return'ontime';if(d<=5)return'd1_5';if(d<=9)return'd6_9';return'd10'}
+/* A matriz precisa considerar todas as NFs em transito. No arquivo, pendencia operacional e definida por ausencia de entrega. */
+function inTransit(x){const e=norm(x.entrega);return !e||e==='—'||e==='nao informado'||e==='não informado'}
+function renderMatrix(){
+ const host=E('agingMatrix');if(!host||typeof rows!=='function')return;
+ const list=rows().filter(inTransit),tree={};
+ list.forEach(x=>{const reg=x.regiao||'Sem região',occ=occurrence(x),b=band(x);tree[reg]??={};tree[reg][occ]??={ontime:0,d1_5:0,d6_9:0,d10:0};tree[reg][occ][b]++});
+ const sum=o=>o.ontime+o.d1_5+o.d6_9+o.d10;
+ const cell=(n,reg,occ,b)=>n?'<button type="button" class="matrixNum" data-reg="'+esc(reg)+'" data-occ="'+esc(occ)+'" data-band="'+b+'">'+fmt(n)+'</button>':'<span class="matrixZero">—</span>';
+ let grand={ontime:0,d1_5:0,d6_9:0,d10:0};
+ let html='<table class="agingMatrix"><thead><tr><th>Acompanhamento de entrega</th><th>No prazo</th><th>1 a 5 dias</th><th>6 a 9 dias</th><th>10 ou mais dias</th><th>Total Geral</th></tr></thead><tbody>';
+ Object.keys(tree).sort().forEach(reg=>{let total={ontime:0,d1_5:0,d6_9:0,d10:0};Object.values(tree[reg]).forEach(o=>Object.keys(total).forEach(k=>total[k]+=o[k]));Object.keys(grand).forEach(k=>grand[k]+=total[k]);html+='<tr class="matrixRegion"><td>▾ '+esc(reg)+'</td><td>'+cell(total.ontime,reg,'','ontime')+'</td><td>'+cell(total.d1_5,reg,'','d1_5')+'</td><td>'+cell(total.d6_9,reg,'','d6_9')+'</td><td>'+cell(total.d10,reg,'','d10')+'</td><td>'+cell(sum(total),reg,'','all')+'</td></tr>';Object.entries(tree[reg]).sort((a,b)=>sum(b[1])-sum(a[1])).forEach(([occ,o])=>{html+='<tr class="matrixDetail"><td><span class="matrixIndent">'+esc(occ)+'</span></td><td>'+cell(o.ontime,reg,occ,'ontime')+'</td><td>'+cell(o.d1_5,reg,occ,'d1_5')+'</td><td>'+cell(o.d6_9,reg,occ,'d6_9')+'</td><td>'+cell(o.d10,reg,occ,'d10')+'</td><td>'+cell(sum(o),reg,occ,'all')+'</td></tr>'})});
+ html+='</tbody><tfoot><tr><td>Total Geral</td><td>'+cell(grand.ontime,'','','ontime')+'</td><td>'+cell(grand.d1_5,'','','d1_5')+'</td><td>'+cell(grand.d6_9,'','','d6_9')+'</td><td>'+cell(grand.d10,'','','d10')+'</td><td>'+cell(sum(grand),'','','all')+'</td></tr></tfoot></table>';host.innerHTML=html;
+ host.onclick=function(ev){const b=ev.target.closest('.matrixNum');if(!b)return;ev.preventDefault();ev.stopPropagation();let rr=rows().filter(inTransit),reg=b.dataset.reg,occ=b.dataset.occ,bd=b.dataset.band;if(reg)rr=rr.filter(x=>(x.regiao||'Sem região')===reg);if(occ)rr=rr.filter(x=>occurrence(x)===occ);if(bd&&bd!=='all')rr=rr.filter(x=>band(x)===bd);if(typeof openRows==='function')openRows('Performance NF em Trânsito',rr)};
+}
+function upsertOnTimeCard(box){
+ if(!box||typeof rows!=='function')return;const r=rows();
+ const value=r.filter(x=>norm(x.statusOtd)==='no prazo').length;
+ let card=box.querySelector('[data-card-entregue-prazo]');
+ if(!card){card=document.createElement('div');card.className='card green';card.setAttribute('data-card-entregue-prazo','1');box.appendChild(card)}
+ card.innerHTML='<div class="k">✅ ENTREGUES NO PRAZO</div><div class="v">'+fmt(value)+'</div>';
+}
+function cards(){upsertOnTimeCard(E('cardsTsp'));upsertOnTimeCard(E('cardsUf'));upsertOnTimeCard(E('cardsCid'))}
+function genericClicks(){
+ document.querySelectorAll('.rank[data-k],.hy-row[data-k],.hy-full-row[data-k],.hy-full-row[data-uf]').forEach(node=>{if(node.dataset.detailBound)return;node.dataset.detailBound='1';node.addEventListener('click',()=>{const k=node.dataset.k||node.dataset.uf;if(!k||typeof openRows!=='function')return;const title=norm(node.closest('.panel')?.querySelector('.pt')?.textContent);let rr=rows();if(title.includes('uf'))rr=rr.filter(x=>x.uf===k);else if(title.includes('tsp')||title.includes('transportadora'))rr=rr.filter(x=>x.tsp===k);else if(title.includes('cidade'))rr=rr.filter(x=>x.cidade===k);openRows('Detalhamento: '+k,rr)})});
+}
+function apply(){renderMatrix();cards();genericClicks()}
+function install(){if(typeof render!=='function'||render.__fixIndex112)return;const old=render;render=function(){const result=old.apply(this,arguments);apply();return result};render.__fixIndex112=true}
+function boot(){install();apply()}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
+})();
+</script>
+
+
+
+<!-- CORRECAO INDEX113: MATRIZ 258 E DRILLDOWN -->
+<style id="fix-index113-css">
+#aging .matrixNum{pointer-events:auto!important;cursor:pointer!important;position:relative!important;z-index:20!important}
+.panel .bi,.panel .rank,.panel .ct-hrow,.panel .hy-row,.panel .hy-full-row,.panel .gauge,.panel .card[data-drill]{cursor:pointer!important}
+.panel .bi:hover,.panel .rank:hover,.panel .ct-hrow:hover,.panel .hy-row:hover,.panel .hy-full-row:hover{filter:brightness(.96)}
+</style>
+<script id="fix-index113-js">
+(function(){'use strict';
+const E=id=>document.getElementById(id);
+const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=n=>Number(n||0).toLocaleString('pt-BR');
+/* O total operacional e Status Pendente No Prazo + Pendente Fora: 212 + 46 = 258 na base completa. */
+function inTransit(x){return norm(x.status).includes('pendente')}
+function occurrence(x){const value=String(x.status1||'').trim();return value&&value!=='Não informado'?value:'Sem atualização operacional'}
+function band(x){const d=Number(x.diasAtraso||0);if(d<=0)return'ontime';if(d<=5)return'd1_5';if(d<=9)return'd6_9';return'd10'}
+function matrixRows(filter){let out=(typeof rows==='function'?rows():[]).filter(inTransit);if(filter.reg)out=out.filter(x=>(x.regiao||'Sem região')===filter.reg);if(filter.occ)out=out.filter(x=>occurrence(x)===filter.occ);if(filter.band&&filter.band!=='all')out=out.filter(x=>band(x)===filter.band);return out}
+function renderMatrix(){
+ const host=E('agingMatrix');if(!host||typeof rows!=='function')return;
+ const list=rows().filter(inTransit),tree={};
+ list.forEach(x=>{const reg=x.regiao||'Sem região',occ=occurrence(x),b=band(x);tree[reg]??={};tree[reg][occ]??={ontime:0,d1_5:0,d6_9:0,d10:0};tree[reg][occ][b]++});
+ const sum=o=>o.ontime+o.d1_5+o.d6_9+o.d10;
+ const cell=(n,reg,occ,b)=>n?'<button type="button" class="matrixNum" data-reg="'+esc(reg)+'" data-occ="'+esc(occ)+'" data-band="'+b+'">'+fmt(n)+'</button>':'<span class="matrixZero">—</span>';
+ let grand={ontime:0,d1_5:0,d6_9:0,d10:0};
+ let html='<table class="agingMatrix"><thead><tr><th>Acompanhamento de entrega</th><th>No prazo</th><th>1 a 5 dias</th><th>6 a 9 dias</th><th>10 ou mais dias</th><th>Total Geral</th></tr></thead><tbody>';
+ Object.keys(tree).sort().forEach(reg=>{let total={ontime:0,d1_5:0,d6_9:0,d10:0};Object.values(tree[reg]).forEach(o=>Object.keys(total).forEach(k=>total[k]+=o[k]));Object.keys(grand).forEach(k=>grand[k]+=total[k]);html+='<tr class="matrixRegion"><td>▾ '+esc(reg)+'</td><td>'+cell(total.ontime,reg,'','ontime')+'</td><td>'+cell(total.d1_5,reg,'','d1_5')+'</td><td>'+cell(total.d6_9,reg,'','d6_9')+'</td><td>'+cell(total.d10,reg,'','d10')+'</td><td>'+cell(sum(total),reg,'','all')+'</td></tr>';Object.entries(tree[reg]).sort((a,b)=>sum(b[1])-sum(a[1])).forEach(([occ,o])=>{html+='<tr class="matrixDetail"><td><span class="matrixIndent">'+esc(occ)+'</span></td><td>'+cell(o.ontime,reg,occ,'ontime')+'</td><td>'+cell(o.d1_5,reg,occ,'d1_5')+'</td><td>'+cell(o.d6_9,reg,occ,'d6_9')+'</td><td>'+cell(o.d10,reg,occ,'d10')+'</td><td>'+cell(sum(o),reg,occ,'all')+'</td></tr>'})});
+ html+='</tbody><tfoot><tr><td>Total Geral</td><td>'+cell(grand.ontime,'','','ontime')+'</td><td>'+cell(grand.d1_5,'','','d1_5')+'</td><td>'+cell(grand.d6_9,'','','d6_9')+'</td><td>'+cell(grand.d10,'','','d10')+'</td><td>'+cell(sum(grand),'','','all')+'</td></tr></tfoot></table>';host.innerHTML=html;
+}
+function installMatrixDrill(){
+ const host=E('agingMatrix');if(!host||host.dataset.captureDrill)return;host.dataset.captureDrill='1';
+ host.addEventListener('click',function(ev){const button=ev.target.closest('.matrixNum');if(!button)return;ev.preventDefault();ev.stopImmediatePropagation();const rr=matrixRows({reg:button.dataset.reg,occ:button.dataset.occ,band:button.dataset.band});if(typeof openRows==='function')openRows('Performance NF em Trânsito',rr)},true);
+}
+function inferFilter(panel,node){
+ const title=norm(panel?.querySelector('.pt')?.textContent),key=node.dataset.key||node.dataset.k||node.dataset.uf||node.getAttribute('title')||node.querySelector('[title]')?.getAttribute('title')||'';
+ if(!key)return null;let rr=typeof rows==='function'?rows():[];
+ if(title.includes('uf'))rr=rr.filter(x=>x.uf===key);else if(title.includes('tsp')||title.includes('transportadora'))rr=rr.filter(x=>x.tsp===key);else if(title.includes('cidade'))rr=rr.filter(x=>x.cidade===key);else return null;
+ if(title.includes('pendente'))rr=rr.filter(inTransit);if(title.includes('atraso'))rr=rr.filter(x=>norm(x.statusOtd).includes('fora'));
+ return{key,rr};
+}
+function reinforceGraphClicks(){
+ document.querySelectorAll('.panel .rank,.panel .ct-hrow,.panel .hy-row,.panel .hy-full-row').forEach(node=>{if(node.dataset.globalDrill)return;const info=inferFilter(node.closest('.panel'),node);if(!info)return;node.dataset.globalDrill='1';node.addEventListener('click',function(ev){ev.preventDefault();ev.stopPropagation();if(typeof openRows==='function')openRows('Detalhamento: '+info.key,info.rr)})});
+}
+function apply(){renderMatrix();installMatrixDrill();reinforceGraphClicks()}
+function install(){if(typeof render!=='function'||render.__fix113Clicks)return;const old=render;render=function(){const result=old.apply(this,arguments);apply();return result};render.__fix113Clicks=true}
+function boot(){install();apply()}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
+})();
+</script>
+
+
+
+<!-- FINAL FIX 114: SINGLE MATRIX OWNER AND DRILLDOWN -->
+<style id="final-114-css">
+#aging .matrixNum{pointer-events:auto!important;cursor:pointer!important;position:relative!important;z-index:50!important}
+.panel .rank,.panel .ct-hrow,.panel .hy-row,.panel .hy-full-row,.panel .bi,.panel .bar{cursor:pointer!important}
+</style>
+<script id="final-114-js">
+(function(){'use strict';
+const E=id=>document.getElementById(id),N=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase(),X=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),F=n=>Number(n||0).toLocaleString('pt-BR');
+function transit(x){return N(x.status).includes('pendente')}
+function occ(x){const v=String(x.status1||'').trim();return v&&v!=='Não informado'?v:'Sem atualização operacional'}
+function band(x){const d=Number(x.diasAtraso||0);return d<=0?'ontime':d<=5?'d1_5':d<=9?'d6_9':'d10'}
+function filtered(reg,oc,b){let rr=rows().filter(transit);if(reg)rr=rr.filter(x=>(x.regiao||'Sem região')===reg);if(oc)rr=rr.filter(x=>occ(x)===oc);if(b&&b!=='all')rr=rr.filter(x=>band(x)===b);return rr}
+function renderMatrix(){
+ let old=E('agingMatrix');if(!old||typeof rows!=='function')return;
+ /* Cloning removes every conflicting listener installed by earlier patches. */
+ const host=old.cloneNode(false);old.replaceWith(host);
+ const list=rows().filter(transit),tree={};list.forEach(x=>{const r=x.regiao||'Sem região',o=occ(x),b=band(x);tree[r]??={};tree[r][o]??={ontime:0,d1_5:0,d6_9:0,d10:0};tree[r][o][b]++});
+ const sum=o=>o.ontime+o.d1_5+o.d6_9+o.d10;
+ const cell=(n,r,o,b)=>n?'<button type="button" class="matrixNum" data-r="'+X(r)+'" data-o="'+X(o)+'" data-b="'+b+'">'+F(n)+'</button>':'<span class="matrixZero">—</span>';
+ let g={ontime:0,d1_5:0,d6_9:0,d10:0},h='<table class="agingMatrix"><thead><tr><th>Acompanhamento de entrega</th><th>No prazo</th><th>1 a 5 dias</th><th>6 a 9 dias</th><th>10 ou mais dias</th><th>Total Geral</th></tr></thead><tbody>';
+ Object.keys(tree).sort().forEach(r=>{let t={ontime:0,d1_5:0,d6_9:0,d10:0};Object.values(tree[r]).forEach(o=>Object.keys(t).forEach(k=>t[k]+=o[k]));Object.keys(g).forEach(k=>g[k]+=t[k]);h+='<tr class="matrixRegion"><td>▾ '+X(r)+'</td><td>'+cell(t.ontime,r,'','ontime')+'</td><td>'+cell(t.d1_5,r,'','d1_5')+'</td><td>'+cell(t.d6_9,r,'','d6_9')+'</td><td>'+cell(t.d10,r,'','d10')+'</td><td>'+cell(sum(t),r,'','all')+'</td></tr>';Object.entries(tree[r]).sort((a,b)=>sum(b[1])-sum(a[1])).forEach(([o,v])=>h+='<tr class="matrixDetail"><td><span class="matrixIndent">'+X(o)+'</span></td><td>'+cell(v.ontime,r,o,'ontime')+'</td><td>'+cell(v.d1_5,r,o,'d1_5')+'</td><td>'+cell(v.d6_9,r,o,'d6_9')+'</td><td>'+cell(v.d10,r,o,'d10')+'</td><td>'+cell(sum(v),r,o,'all')+'</td></tr>')});
+ h+='</tbody><tfoot><tr><td>Total Geral</td><td>'+cell(g.ontime,'','','ontime')+'</td><td>'+cell(g.d1_5,'','','d1_5')+'</td><td>'+cell(g.d6_9,'','','d6_9')+'</td><td>'+cell(g.d10,'','','d10')+'</td><td>'+cell(sum(g),'','','all')+'</td></tr></tfoot></table>';host.innerHTML=h;
+ host.addEventListener('click',ev=>{const b=ev.target.closest('.matrixNum');if(!b)return;ev.preventDefault();ev.stopPropagation();if(typeof openRows==='function')openRows('Performance NF em Trânsito',filtered(b.dataset.r,b.dataset.o,b.dataset.b))});
+ const p=host.closest('.panel');if(p){p.classList.remove('hy-hide','hide');p.style.setProperty('display','block','important');const title=p.querySelector('.pt');if(title)title.innerHTML='Performance NF em Trânsito <span class="matrixHint">Clique nos números para visualizar as NFs</span>';const cards=E('cardsAging');if(cards&&cards.nextElementSibling!==p)cards.after(p)}
+}
+function bindCharts(){document.querySelectorAll('.panel .rank,.panel .ct-hrow,.panel .hy-row,.panel .hy-full-row').forEach(n=>{if(n.dataset.final114)return;n.dataset.final114='1';n.addEventListener('click',ev=>{const p=n.closest('.panel'),t=N(p?.querySelector('.pt')?.textContent),k=n.dataset.key||n.dataset.k||n.dataset.uf||n.getAttribute('title');if(!k||typeof openRows!=='function')return;let rr=rows();if(t.includes('uf'))rr=rr.filter(x=>x.uf===k);else if(t.includes('tsp')||t.includes('transportadora'))rr=rr.filter(x=>x.tsp===k);else if(t.includes('cidade'))rr=rr.filter(x=>x.cidade===k);else return;if(t.includes('pendente'))rr=rr.filter(transit);if(t.includes('atraso'))rr=rr.filter(x=>N(x.statusOtd).includes('fora'));ev.preventDefault();ev.stopPropagation();openRows('Detalhamento: '+k,rr)})})}
+function apply(){renderMatrix();bindCharts()}
+function install(){if(typeof render!=='function'||render.__final114)return;const base=render;render=function(){const r=base.apply(this,arguments);apply();return r};render.__final114=true}
+function boot(){install();apply()}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
+})();
+</script>
+
+
+<!-- FIX 117: uma unica regra operacional para pendentes + drill da matriz -->
+<style id="fix-117-css">
+#agingMatrix .matrixNum{appearance:none;border:0;background:transparent;color:#1769e0;font:inherit;font-weight:950;cursor:pointer!important;pointer-events:auto!important;padding:3px 9px;border-radius:7px;position:relative;z-index:100}
+#agingMatrix .matrixNum:hover{background:rgba(23,105,224,.14);text-decoration:underline}
+</style>
+<script id="fix-117-js">
+(function(){'use strict';
+const E=id=>document.getElementById(id),N=v=>String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim(),X=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),F=n=>Number(n||0).toLocaleString('pt-BR');
+/* Regra unica: NF pendente/em transito e NF sem data de entrega. */
+function operationalPending(x){const e=N(x&&x.entrega);return !e||e==='—'||e==='nao informado'}
+if(typeof isPending==='function')isPending=operationalPending;
+const occ=x=>{const v=String(x.status1||'').trim();return v&&N(v)!=='nao informado'?v:'Sem atualização operacional'};
+const band=x=>{const d=Number(x.diasAtraso||0);return d<=0?'ontime':d<=5?'d1_5':d<=9?'d6_9':'d10'};
+function pendingRows(){return typeof rows==='function'?rows().filter(operationalPending):[]}
+function matrixRows(b){let a=pendingRows();const reg=b.dataset.reg||b.dataset.region||'',oc=b.dataset.occ||b.dataset.occurrence||'',bn=b.dataset.band||b.dataset.b||'';if(reg)a=a.filter(x=>(x.regiao||'Sem região')===reg);if(oc)a=a.filter(x=>occ(x)===oc);if(bn&&bn!=='all')a=a.filter(x=>band(x)===bn);return a}
+function drawMatrix(){
+ let old=E('agingMatrix');if(!old)return;const host=old.cloneNode(false);old.replaceWith(host);const data=pendingRows(),tree=Object.create(null),ks=['ontime','d1_5','d6_9','d10'];
+ data.forEach(x=>{const r=x.regiao||'Sem região',o=occ(x),b=band(x);if(!tree[r])tree[r]=Object.create(null);if(!tree[r][o])tree[r][o]={ontime:0,d1_5:0,d6_9:0,d10:0};tree[r][o][b]++});
+ const sum=o=>ks.reduce((n,k)=>n+o[k],0),cell=(n,r,o,b)=>n?'<button type="button" class="matrixNum" data-reg="'+X(r)+'" data-occ="'+X(o)+'" data-band="'+b+'">'+F(n)+'</button>':'<span class="matrixZero">—</span>',grand={ontime:0,d1_5:0,d6_9:0,d10:0};
+ let h='<table class="agingMatrix"><thead><tr><th>Acompanhamento de entrega</th><th>No prazo</th><th>1 a 5 dias</th><th>6 a 9 dias</th><th>10 ou mais dias</th><th>Total Geral</th></tr></thead><tbody>';
+ Object.keys(tree).sort().forEach(r=>{const t={ontime:0,d1_5:0,d6_9:0,d10:0};Object.values(tree[r]).forEach(o=>ks.forEach(k=>t[k]+=o[k]));ks.forEach(k=>grand[k]+=t[k]);h+='<tr class="matrixRegion"><td>▾ '+X(r)+'</td>'+ks.map(k=>'<td>'+cell(t[k],r,'',k)+'</td>').join('')+'<td>'+cell(sum(t),r,'','all')+'</td></tr>';Object.entries(tree[r]).sort((a,b)=>sum(b[1])-sum(a[1])).forEach(([o,v])=>{h+='<tr class="matrixDetail"><td><span class="matrixIndent">'+X(o)+'</span></td>'+ks.map(k=>'<td>'+cell(v[k],r,o,k)+'</td>').join('')+'<td>'+cell(sum(v),r,o,'all')+'</td></tr>'})});
+ h+='</tbody><tfoot><tr><td>Total Geral</td>'+ks.map(k=>'<td>'+cell(grand[k],'','',k)+'</td>').join('')+'<td>'+cell(data.length,'','','all')+'</td></tr></tfoot></table>';host.innerHTML=h;
+ const card=[...(E('cardsAging')?.querySelectorAll('.card')||[])].find(c=>N(c.querySelector('.k')?.textContent).includes('pendentes nf'));if(card){const v=card.querySelector('.v');if(v)v.textContent=F(data.length)}
+}
+function apply117(){drawMatrix()}
+/* Captura antes de qualquer listener antigo e abre o detalhamento. */
+document.addEventListener('click',function(e){const b=e.target.closest&&e.target.closest('#agingMatrix .matrixNum');if(!b)return;e.preventDefault();e.stopImmediatePropagation();if(typeof openRows==='function')openRows('Performance NF em Trânsito',matrixRows(b))},true);
+if(typeof render==='function'&&!render.__fix117){const old=render;render=function(){const result=old.apply(this,arguments);apply117();return result};render.__fix117=true}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',apply117,{once:true});else apply117();
+})();
+</script>
+
+
+<!-- FIX 121: Performance NF em Transito ignora somente Mes/Ano -->
+<style id="performance-121-css">
+#agingMatrix .matrixNum121{appearance:none;border:0;background:transparent;color:var(--blue);font:inherit;font-weight:950;cursor:pointer!important;pointer-events:auto!important;padding:3px 9px;border-radius:7px;min-width:34px;position:relative;z-index:100}
+#agingMatrix .matrixNum121:hover{background:rgba(37,111,232,.14);text-decoration:underline}
+#agingMatrix .matrixRegion .matrixNum121,#agingMatrix tfoot .matrixNum121{color:#fff}
+</style>
+<script id="performance-121-js">
+(function(){'use strict';
+const E=id=>document.getElementById(id);
+const N=v=>String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+const X=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const F=n=>Number(n||0).toLocaleString('pt-BR');
+const pending=x=>x&&(x.statusOtd==='Pendente No Prazo'||x.statusOtd==='Pendente Fora');
+const occurrence=x=>{const v=String(x.status1||'').trim();return v&&N(v)!=='nao informado'?v:'Sem atualização operacional'};
+const band=x=>{const d=Number(x.diasAtraso||0);return d<=0?'ontime':d<=5?'d1_5':d<=9?'d6_9':'d10'};
+
+/* Mes e ano sao ignorados somente nesta matriz. Todos os demais filtros continuam ativos. */
+function performanceRows121(){
+ const query=String(E('q')?.value||'').toLowerCase().trim();
+ const active=[...document.querySelectorAll('#filters select')].filter(select=>select.value&&select.dataset.field!=='mes'&&select.dataset.field!=='ano');
+ return (typeof DATA!=='undefined'?DATA:[]).filter(row=>
+  active.every(select=>String(row[select.dataset.field]??'')===String(select.value))&&
+  (!query||[row.nf,row.cliente,row.cidade,row.uf,row.tsp].join(' ').toLowerCase().includes(query))
+ ).filter(pending);
+}
+function detailRows121(button){
+ let result=performanceRows121();
+ const region=button.dataset.region||'',status=button.dataset.status||'',aging=button.dataset.aging||'';
+ if(region)result=result.filter(row=>(row.regiao||'Sem região')===region);
+ if(status)result=result.filter(row=>occurrence(row)===status);
+ if(aging&&aging!=='all')result=result.filter(row=>band(row)===aging);
+ return result;
+}
+function renderPerformance121(){
+ const old=E('agingMatrix');if(!old)return;
+ const host=old.cloneNode(false);old.replaceWith(host);
+ const data=performanceRows121(),bands=['ontime','d1_5','d6_9','d10'],regions=new Map();
+ data.forEach(row=>{
+  const region=row.regiao||'Sem região',status=occurrence(row),aging=band(row);
+  if(!regions.has(region))regions.set(region,new Map());
+  const statuses=regions.get(region);
+  if(!statuses.has(status))statuses.set(status,{ontime:0,d1_5:0,d6_9:0,d10:0});
+  statuses.get(status)[aging]++;
+ });
+ const sum=values=>bands.reduce((total,key)=>total+values[key],0);
+ const cell=(value,region,status,aging)=>value?'<button type="button" class="matrixNum121" data-region="'+X(region)+'" data-status="'+X(status)+'" data-aging="'+aging+'">'+F(value)+'</button>':'<span class="matrixZero">—</span>';
+ const grand={ontime:0,d1_5:0,d6_9:0,d10:0};
+ let html='<table class="agingMatrix"><thead><tr><th>Acompanhamento de entrega</th><th>No prazo</th><th>1 a 5 dias</th><th>6 a 9 dias</th><th>10 ou mais dias</th><th>Total Geral</th></tr></thead><tbody>';
+ [...regions.keys()].sort((a,b)=>a.localeCompare(b,'pt-BR')).forEach(region=>{
+  const total={ontime:0,d1_5:0,d6_9:0,d10:0},statuses=regions.get(region);
+  statuses.forEach(values=>bands.forEach(key=>total[key]+=values[key]));
+  bands.forEach(key=>grand[key]+=total[key]);
+  html+='<tr class="matrixRegion"><td>▾ '+X(region)+'</td>'+bands.map(key=>'<td>'+cell(total[key],region,'',key)+'</td>').join('')+'<td>'+cell(sum(total),region,'','all')+'</td></tr>';
+  [...statuses.entries()].sort((a,b)=>sum(b[1])-sum(a[1])).forEach(([status,values])=>{
+   html+='<tr class="matrixDetail"><td><span class="matrixIndent">'+X(status)+'</span></td>'+bands.map(key=>'<td>'+cell(values[key],region,status,key)+'</td>').join('')+'<td>'+cell(sum(values),region,status,'all')+'</td></tr>';
+  });
+ });
+ html+='</tbody><tfoot><tr><td>Total Geral</td>'+bands.map(key=>'<td>'+cell(grand[key],'','',key)+'</td>').join('')+'<td>'+cell(data.length,'','','all')+'</td></tr></tfoot></table>';
+ host.innerHTML=html;
+ const card=[...(E('cardsAging')?.querySelectorAll('.card')||[])].find(c=>N(c.querySelector('.k')?.textContent).includes('pendentes nf'));
+ if(card){const value=card.querySelector('.v');if(value)value.textContent=F(data.length)}
+}
+function openDetail121(button){
+ const detail=detailRows121(button);
+ if(typeof openRows==='function')openRows('Performance NF em Trânsito',detail);
+}
+/* Classe exclusiva evita que os listeners antigos interceptem o clique. */
+document.addEventListener('click',event=>{
+ const button=event.target.closest&&event.target.closest('#agingMatrix .matrixNum121');
+ if(!button)return;
+ event.preventDefault();event.stopImmediatePropagation();openDetail121(button);
+},true);
+function apply121(){renderPerformance121()}
+if(typeof render==='function'&&!render.__performance121){
+ const original=render;
+ render=function(){const result=original.apply(this,arguments);apply121();return result};
+ render.__performance121=true;
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',apply121,{once:true});else apply121();
+})();
+</script>
+
+<!-- FIX FINAL: matriz e card usam a mesma base de NFs em trânsito -->
+<script id="performance-aging-final-js">
+(function(){
+  'use strict';
+  const el=id=>document.getElementById(id);
+  const norm=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+  const escFinal=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const format=value=>Number(value||0).toLocaleString('pt-BR');
+  const occurrence=x=>{const value=String(x.status1||'').trim();return value&&norm(value)!=='nao informado'?value:'Sem atualização operacional'};
+  const agingBand=x=>{const days=Number(x.diasAtraso||0);return days<=0?'ontime':days<=5?'d1_5':days<=9?'d6_9':'d10'};
+  function matrixBase(){
+    const query=String(el('q')?.value||'').toLowerCase().trim();
+    const filters=[...document.querySelectorAll('#filters select')].filter(select=>select.value);
+    return (typeof DATA!=='undefined'?DATA:[]).filter(row=>
+      filters.every(select=>String(row[select.dataset.field]??'')===String(select.value))&&
+      (!query||[row.nf,row.cliente,row.cidade,row.uf,row.tsp].join(' ').toLowerCase().includes(query))
+    ).filter(row=>typeof isPending==='function'&&isPending(row));
+  }
+  function matrixDetail(button){
+    let result=matrixBase();
+    const region=button.dataset.region||'',status=button.dataset.status||'',band=button.dataset.aging||'';
+    if(region)result=result.filter(row=>(row.regiao||'Sem região')===region);
+    if(status)result=result.filter(row=>occurrence(row)===status);
+    if(band&&band!=='all')result=result.filter(row=>agingBand(row)===band);
+    return result;
+  }
+  function renderFinal(){
+    const old=el('agingMatrix');if(!old)return;
+    const host=old.cloneNode(false);old.replaceWith(host);
+    const bands=['ontime','d1_5','d6_9','d10'],regions=new Map(),data=matrixBase();
+    data.forEach(row=>{
+      const region=row.regiao||'Sem região',status=occurrence(row),band=agingBand(row);
+      if(!regions.has(region))regions.set(region,new Map());
+      if(!regions.get(region).has(status))regions.get(region).set(status,{ontime:0,d1_5:0,d6_9:0,d10:0});
+      regions.get(region).get(status)[band]++;
+    });
+    const total=values=>bands.reduce((sum,key)=>sum+values[key],0);
+    const cell=(value,region,status,aging)=>value?'<button type="button" class="matrixNumFinal" data-region="'+escFinal(region)+'" data-status="'+escFinal(status)+'" data-aging="'+aging+'">'+format(value)+'</button>':'<span class="matrixZero">-</span>';
+    const grand={ontime:0,d1_5:0,d6_9:0,d10:0};
+    let html='<table class="agingMatrix"><thead><tr><th>Acompanhamento de entrega</th><th>No prazo</th><th>1 a 5 dias</th><th>6 a 9 dias</th><th>10 ou mais dias</th><th>Total Geral</th></tr></thead><tbody>';
+    [...regions.keys()].sort((a,b)=>a.localeCompare(b,'pt-BR')).forEach(region=>{
+      const values={ontime:0,d1_5:0,d6_9:0,d10:0},statuses=regions.get(region);
+      statuses.forEach(item=>bands.forEach(key=>values[key]+=item[key]));
+      bands.forEach(key=>grand[key]+=values[key]);
+      html+='<tr class="matrixRegion"><td>- '+escFinal(region)+'</td>'+bands.map(key=>'<td>'+cell(values[key],region,'',key)+'</td>').join('')+'<td>'+cell(total(values),region,'','all')+'</td></tr>';
+      [...statuses.entries()].sort((a,b)=>total(b[1])-total(a[1])).forEach(([status,item])=>{
+        html+='<tr class="matrixDetail"><td><span class="matrixIndent">'+escFinal(status)+'</span></td>'+bands.map(key=>'<td>'+cell(item[key],region,status,key)+'</td>').join('')+'<td>'+cell(total(item),region,status,'all')+'</td></tr>';
+      });
+    });
+    html+='</tbody><tfoot><tr><td>Total Geral</td>'+bands.map(key=>'<td>'+cell(grand[key],'','',key)+'</td>').join('')+'<td>'+cell(data.length,'','','all')+'</td></tr></tfoot></table>';
+    host.innerHTML=html;
+    const card=[...(el('cardsAging')?.querySelectorAll('.card')||[])].find(item=>norm(item.querySelector('.k')?.textContent).includes('pendentes nf'));
+    if(card&&card.querySelector('.v'))card.querySelector('.v').textContent=format(data.length);
+  }
+  document.addEventListener('click',event=>{
+    const button=event.target.closest&&event.target.closest('#agingMatrix .matrixNumFinal');
+    if(!button)return;
+    event.preventDefault();event.stopImmediatePropagation();
+    const detail=matrixDetail(button);
+    if(typeof drill==='function'&&typeof openDrill==='function')openDrill(drill('Performance NF em Trânsito',()=>detail));
+  },true);
+  if(typeof render==='function'&&!render.__performanceAgingFinal){
+    const original=render;
+    render=function(){let result;try{result=original.apply(this,arguments)}finally{renderFinal()}return result};
+    render.__performanceAgingFinal=true;
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',renderFinal,{once:true});else renderFinal();
+})();
+</script>
+
 </body></html>
