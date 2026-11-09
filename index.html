@@ -939,21 +939,27 @@ function exportDetailExcel(){
  if(typeof XLSX==='undefined'){alert('Não foi possível carregar o gerador de Excel. Verifique a conexão e tente novamente.');return}
  if(btn){btn.disabled=true;btn.textContent='Gerando Excel...'}
  try{
-  const data=rr.map(x=>({
-   'NF':x.nf==='Não informado'?'':x.nf,
-   'Cliente':x.cliente==='Não informado'?'':x.cliente,
-   'Cidade':x.cidade==='Não informado'?'':x.cidade,
-   'UF':x.uf==='Não informado'?'':x.uf,
-   'Transportadora':x.tsp==='Não informado'?'':x.tsp,
-   'Status':x.statusOtd==='Não informado'?'':x.statusOtd,
-   'Atualização operacional':x.status1==='Não informado'?'Sem atualização operacional':x.status1,
-   'Volumes':Number(x.vol||0),
-   'Aging':Number(x.diasAtraso||0),
-   'Previsão':x.previsao==='Não informado'?'':x.previsao,
-   'Entrega':x.entrega==='Não informado'?'':x.entrega
-  }));
+  const clientMode=document.body.classList.contains('client-mode');
+  const data=rr.map(x=>{
+   const row={
+    'NF':x.nf==='Não informado'?'':x.nf,
+    'Cliente':x.cliente==='Não informado'?'':x.cliente,
+    'Cidade':x.cidade==='Não informado'?'':x.cidade,
+    'UF':x.uf==='Não informado'?'':x.uf
+   };
+   if(!clientMode)row['Transportadora']=x.tsp==='Não informado'?'':x.tsp;
+   Object.assign(row,{
+    'Status':x.statusOtd==='Não informado'?'':x.statusOtd,
+    'Atualização operacional':x.status1==='Não informado'?'Sem atualização operacional':x.status1,
+    'Volumes':Number(x.vol||0),
+    'Aging':Number(x.diasAtraso||0),
+    'Previsão':x.previsao==='Não informado'?'':x.previsao,
+    'Entrega':x.entrega==='Não informado'?'':x.entrega
+   });
+   return row;
+  });
   const ws=XLSX.utils.json_to_sheet(data);
-  ws['!cols']=[{wch:14},{wch:42},{wch:24},{wch:8},{wch:30},{wch:20},{wch:75},{wch:10},{wch:10},{wch:14},{wch:14}];
+  ws['!cols']=[{wch:14},{wch:42},{wch:24},{wch:8}].concat(clientMode?[]:[{wch:30}],[{wch:20},{wch:75},{wch:10},{wch:10},{wch:14},{wch:14}]);
   ws['!autofilter']={ref:ws['!ref']};
   const wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,ws,'Detalhamento');
@@ -1433,7 +1439,7 @@ document.addEventListener('mouseleave',function(){tip.classList.remove('on')});
 .hy-status-table-wrap{width:100%;overflow:auto}
 .hy-status-table{width:100%;min-width:760px}
 .hy-status-table th,.hy-status-table td{white-space:nowrap}
-#hyOverviewStatus{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;margin-top:8px!important}
+#hyOverviewStatus{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:8px!important;margin-top:8px!important}
 #hyOverviewStatus>.panel{min-width:0!important}
 @media(max-width:760px){#hyOverviewStatus{grid-template-columns:1fr!important}}
 @media(max-width:620px){.gauge{height:160px!important;min-height:160px!important}.gauge svg{height:148px!important}.gnum{top:63px!important;font-size:27px!important}.gmeta{top:100px!important}#hyNfTop #gNf{height:160px!important;min-height:160px!important}#hyNfTop #gNf svg{height:148px!important}#hyNfTop #gNf .gnum{top:63px!important;font-size:27px!important}#hyNfTop #gNf .gmeta{top:100px!important}}
@@ -1462,7 +1468,7 @@ document.addEventListener('mouseleave',function(){tip.classList.remove('on')});
   if(!host){
    host=document.createElement('div');
    host.id='hyOverviewStatus';
-   host.innerHTML='<div class="panel"><div class="pt">📍 Status por NF — UF</div><div id="hyOverviewStatusUf"></div></div><div class="panel"><div class="pt">🚚 Status por NF — Transportadora</div><div id="hyOverviewStatusTsp"></div></div>';
+   host.innerHTML='<div class="panel"><div class="pt">🚚 Status por NF — Transportadora</div><div id="hyOverviewStatusTsp"></div></div>';
    geral.appendChild(host);
   }
  }
@@ -1565,7 +1571,6 @@ document.addEventListener('mouseleave',function(){tip.classList.remove('on')});
   }
   if(page==='geral'){
    ensureOverviewTables();
-   renderStatusTable('hyOverviewStatusUf',list,'uf','UF');
    renderStatusTable('hyOverviewStatusTsp',list,'tsp','Transportadora');
   }
   updateGaugeChips(list);
